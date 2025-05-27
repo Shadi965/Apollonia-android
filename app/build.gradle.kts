@@ -50,6 +50,7 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.collections.immutable)
 
     implementation(libs.androidx.room)
     ksp(libs.androidx.room.compiler)
@@ -57,6 +58,14 @@ dependencies {
 
     implementation(libs.square.retrofit)
     implementation(libs.square.retrofit.moshi)
+    implementation(libs.square.moshi.kotlin)
+    ksp(libs.square.moshi.kotlin.codegen)
+
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network)
+
+    implementation(libs.androidx.exoplayer)
+    implementation(libs.androidx.exoplayer.compose)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
