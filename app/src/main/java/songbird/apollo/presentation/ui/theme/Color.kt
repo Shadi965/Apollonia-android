@@ -1,4 +1,4 @@
-package songbird.apollo.ui.theme
+package songbird.apollo.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

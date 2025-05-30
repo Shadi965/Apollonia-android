@@ -1,6 +1,5 @@
-package songbird.apollo.ui.theme
+package songbird.apollo.presentation.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
