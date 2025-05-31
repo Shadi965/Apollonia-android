@@ -3,9 +3,9 @@ package songbird.apollo.data.network
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonEncodingException
 import retrofit2.HttpException
-import songbird.apollo.BackendException
-import songbird.apollo.NoConnectionException
-import songbird.apollo.ParseBackendResponseException
+import songbird.apollo.data.BackendException
+import songbird.apollo.data.NoConnectionException
+import songbird.apollo.data.ParseBackendResponseException
 import java.io.IOException
 import java.net.ConnectException
 
