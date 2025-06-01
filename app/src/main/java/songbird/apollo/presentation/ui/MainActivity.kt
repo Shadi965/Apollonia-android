@@ -7,9 +7,26 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
+import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import songbird.apollo.presentation.ui.screens.test.AlbumListScreen
+import songbird.apollo.presentation.ui.screens.FavoriteGraph
+import songbird.apollo.presentation.ui.screens.FavoriteGraph.FavoriteScreenRoute
+import songbird.apollo.presentation.ui.screens.LibraryGraph
+import songbird.apollo.presentation.ui.screens.LibraryGraph.LibraryScreenRoute
+import songbird.apollo.presentation.ui.screens.LocalNavController
+import songbird.apollo.presentation.ui.screens.SearchGraph
+import songbird.apollo.presentation.ui.screens.SearchGraph.SearchScreenRoute
+import songbird.apollo.presentation.ui.screens.favorites.FavoritesScreen
+import songbird.apollo.presentation.ui.screens.library.LibraryScreen
+import songbird.apollo.presentation.ui.screens.scaffold.BottomNavBar
+import songbird.apollo.presentation.ui.screens.scaffold.MainTabs
+import songbird.apollo.presentation.ui.screens.search.SearchScreen
 import songbird.apollo.presentation.ui.theme.ApolloniaTheme
 
 @AndroidEntryPoint
@@ -19,8 +36,43 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ApolloniaTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AlbumListScreen(modifier = Modifier.padding(innerPadding))
+                NavApp()
+            }
+        }
+    }
+}
+
+@Composable
+fun NavApp() {
+    val navController = rememberNavController()
+    Scaffold(
+        bottomBar = {
+            BottomNavBar(
+                navController = navController,
+                tabs = MainTabs
+            )
+        }
+    ) { innerPadding ->
+        CompositionLocalProvider(
+            LocalNavController provides navController
+        ) {
+            NavHost(
+                navController = navController,
+                startDestination = FavoriteGraph,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                navigation<FavoriteGraph>(
+                    startDestination = FavoriteScreenRoute
+                ) {
+                    composable<FavoriteScreenRoute> { FavoritesScreen() }
+                }
+                navigation<LibraryGraph>(startDestination = LibraryScreenRoute) {
+                    composable<LibraryScreenRoute> { LibraryScreen() }
+                }
+                navigation<SearchGraph>(startDestination = SearchScreenRoute) {
+                    composable<SearchScreenRoute> { SearchScreen() }
                 }
             }
         }
