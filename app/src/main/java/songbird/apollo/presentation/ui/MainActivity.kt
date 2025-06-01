@@ -10,11 +10,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import songbird.apollo.R
 import songbird.apollo.presentation.ui.screens.FavoriteGraph
 import songbird.apollo.presentation.ui.screens.FavoriteGraph.FavoriteScreenRoute
 import songbird.apollo.presentation.ui.screens.LibraryGraph
@@ -26,6 +29,8 @@ import songbird.apollo.presentation.ui.screens.favorites.FavoritesScreen
 import songbird.apollo.presentation.ui.screens.library.LibraryScreen
 import songbird.apollo.presentation.ui.screens.scaffold.BottomNavBar
 import songbird.apollo.presentation.ui.screens.scaffold.MainTabs
+import songbird.apollo.presentation.ui.screens.scaffold.NavigateUpAction
+import songbird.apollo.presentation.ui.screens.scaffold.TopToolBar
 import songbird.apollo.presentation.ui.screens.search.SearchScreen
 import songbird.apollo.presentation.ui.theme.ApolloniaTheme
 
@@ -45,7 +50,27 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun NavApp() {
     val navController = rememberNavController()
+    val currentBackStackEntry = navController.currentBackStackEntryAsState()
+    val destination = currentBackStackEntry.value?.destination
+    val topBarTitleRes = when {
+        destination?.hasRoute(FavoriteScreenRoute::class) == true -> R.string.favorite
+        destination?.hasRoute(LibraryScreenRoute::class) == true -> R.string.library
+        destination?.hasRoute(SearchScreenRoute::class) == true -> R.string.search
+        else -> R.string.app_name
+    }
     Scaffold(
+        topBar = {
+            TopToolBar(
+                navigateUp = if (navController.previousBackStackEntry == null) {
+                    NavigateUpAction.Hidden
+                } else {
+                    NavigateUpAction.Visible {
+                        navController.navigateUp()
+                    }
+                },
+                title = topBarTitleRes
+            )
+        },
         bottomBar = {
             BottomNavBar(
                 navController = navController,
