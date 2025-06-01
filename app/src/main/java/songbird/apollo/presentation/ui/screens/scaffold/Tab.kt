@@ -16,7 +16,8 @@ import songbird.apollo.presentation.ui.screens.SearchGraph
 data class AppTab(
     val icon: ImageVector,
     @StringRes val labelRes: Int,
-    val graph: AppGraph
+    val graph: AppGraph,
+    val graphName: String? = graph::class.simpleName
 )
 
 val MainTabs = persistentListOf(

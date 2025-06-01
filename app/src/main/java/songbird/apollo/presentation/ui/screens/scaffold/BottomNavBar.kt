@@ -30,7 +30,7 @@ fun BottomNavBar(
         val graphClassSimpleName = currentGraphDestination?.route
             ?.substringAfterLast('.')
 
-        val currentTab = tabs.firstOrNull { it.graph::class.simpleName == graphClassSimpleName }
+        val currentTab = tabs.firstOrNull { it.graphName == graphClassSimpleName }
         tabs.forEach { tab ->
             NavigationBarItem(
                 selected = currentTab == tab,
