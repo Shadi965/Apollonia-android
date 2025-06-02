@@ -1,5 +1,7 @@
 package songbird.apollo.presentation.ui.screens.scaffold
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -9,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph
@@ -20,45 +23,55 @@ fun BottomNavBar(
     navController: NavController,
     tabs: ImmutableList<AppTab>
 ) {
-    NavigationBar(
-        containerColor = MaterialTheme.colorScheme.primaryContainer
-    ) {
-        val currentBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentGraphDestination = currentBackStackEntry?.destination?.hierarchy?.first {
-            it is NavGraph
-        }
-        val graphClassSimpleName = currentGraphDestination?.route
-            ?.substringAfterLast('.')
+    Column {
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
+        NavigationBar(
+            containerColor = MaterialTheme.colorScheme.surface
+        ) {
+            val currentBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentGraphDestination = currentBackStackEntry?.destination?.hierarchy?.first {
+                it is NavGraph
+            }
+            val graphClassSimpleName = currentGraphDestination?.route
+                ?.substringAfterLast('.')
 
-        val currentTab = tabs.firstOrNull { it.graphName == graphClassSimpleName }
-        tabs.forEach { tab ->
-            NavigationBarItem(
-                selected = currentTab == tab,
-                onClick = {
-                    if (currentTab != null) {
-                        navController.navigate(tab.graph) {
-                            popUpTo(currentTab.graph) {
-                                inclusive = true
-                                saveState = true
+            val currentTab = tabs.firstOrNull { it.graphName == graphClassSimpleName }
+            tabs.forEach { tab ->
+                NavigationBarItem(
+                    selected = currentTab == tab,
+                    onClick = {
+                        if (currentTab != null) {
+                            navController.navigate(tab.graph) {
+                                popUpTo(currentTab.graph) {
+                                    inclusive = true
+                                    saveState = true
+                                }
+                                restoreState = true
                             }
-                            restoreState = true
                         }
-                    }
-                },
-                icon = {
-                    Icon(
-                        imageVector = tab.icon,
-                        contentDescription = null // TODO: Добавить описание
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = tab.icon,
+                            contentDescription = null // TODO: Добавить описание
+                        )
+                    },
+                    label = {
+                        Text(
+                            text = stringResource(tab.labelRes),
+                            color = if (currentTab == tab)
+                                MaterialTheme.colorScheme.onBackground
+                            else
+                                MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+                        )
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.onSurface,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        indicatorColor = MaterialTheme.colorScheme.surfaceVariant
                     )
-                },
-                label = {
-                    Text(stringResource(tab.labelRes))
-                },
-                colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = MaterialTheme.colorScheme.tertiaryContainer,
-                    selectedIconColor = MaterialTheme.colorScheme.onTertiaryContainer
                 )
-            )
+            }
         }
     }
 }
