@@ -22,15 +22,15 @@ data class AppTab(
 
 val MainTabs = persistentListOf(
     AppTab(
-        icon = Icons.Default.Favorite,
-        labelRes = R.string.favorite,
-        graph = FavoriteGraph
-    ),
-    AppTab(
         // TODO: Иконку заменить
         icon = Icons.Default.Home,
         labelRes = R.string.library,
         graph = LibraryGraph
+    ),
+    AppTab(
+        icon = Icons.Default.Favorite,
+        labelRes = R.string.favorite,
+        graph = FavoriteGraph
     ),
     AppTab(
         icon = Icons.Default.Search,
