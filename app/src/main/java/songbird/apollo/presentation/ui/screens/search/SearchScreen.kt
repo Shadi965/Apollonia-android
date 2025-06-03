@@ -1,6 +1,7 @@
 package songbird.apollo.presentation.ui.screens.search
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,8 +37,7 @@ fun SearchScreen(modifier: Modifier = Modifier) {
     SearchScreenContent(
         modifier = modifier.fillMaxSize(),
         getState = { state.value },
-        onClick = { viewModel.load() }
-    )
+        onClick = { viewModel.load() })
 }
 
 @Composable
@@ -46,10 +46,9 @@ private fun SearchScreenContent(
     getState: () -> LoadResult<List<SongPreviewUi>>,
     onClick: () -> Unit = {}
 ) {
-    Column(
+    Box(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        contentAlignment = Alignment.Center
     ) {
         when (val screenState = getState()) {
             is Loading -> {
@@ -57,28 +56,38 @@ private fun SearchScreenContent(
                     text = "Грузится"
                 )
             }
+
             is Empty -> {
                 Text(
                     text = "Пусто"
                 )
             }
+
             is Success -> {
                 LazyColumn(modifier = modifier) {
                     items(screenState.data) { song ->
                         SongItem(
-                            song = song)
+                            song = song
+                        )
                     }
                 }
             }
+
             else -> {
                 // TODO: Ошибка загрузки списка
-                Text(
-                    text = "Ошибочка вышла"
-                )
+                Column(
+                    modifier = modifier,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Ошибочка вышла"
+                    )
+                    Button(onClick = onClick) {
+                        Text(text = "Загрузить")
+                    }
+                }
             }
-        }
-        Button(onClick = onClick) {
-            Text(text = "Загрузить")
         }
     }
 }
@@ -99,7 +108,6 @@ private fun SearchScreenPreview() {
             )
         })
     }
-    SearchScreenContent (
-        getState = { Success(songs) }
-    ){}
+    SearchScreenContent(
+        getState = { Success(songs) }) {}
 }
