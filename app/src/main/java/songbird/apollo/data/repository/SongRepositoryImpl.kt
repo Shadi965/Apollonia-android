@@ -5,10 +5,11 @@ import songbird.apollo.data.network.wrapRetrofitExceptions
 import songbird.apollo.data.toSongPreview
 import songbird.apollo.domain.model.SongPreview
 import songbird.apollo.domain.repository.SongRepository
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SongRepositoryImpl(
+class SongRepositoryImpl @Inject constructor(
     private val songApi: SongApi
 ) : SongRepository {
 
