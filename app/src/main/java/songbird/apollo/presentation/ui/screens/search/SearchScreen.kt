@@ -1,12 +1,15 @@
 package songbird.apollo.presentation.ui.screens.search
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -15,7 +18,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import songbird.apollo.R
 import songbird.apollo.presentation.model.SongPreviewUi
@@ -34,57 +40,82 @@ fun SearchScreen(modifier: Modifier = Modifier) {
 
     val viewModel: SearchScreenViewModel = hiltViewModel()
     val state = viewModel.foundSongs.collectAsState()
+    val searchQuery = viewModel.searchQuery.collectAsState()
     SearchScreenContent(
         modifier = modifier.fillMaxSize(),
         getState = { state.value },
-        onClick = { viewModel.load() })
+        onSearch = { viewModel.onSearchQueryChange(it) },
+        searchQuery = searchQuery.value
+    )
 }
 
 @Composable
 private fun SearchScreenContent(
     modifier: Modifier = Modifier,
     getState: () -> LoadResult<List<SongPreviewUi>>,
-    onClick: () -> Unit = {}
+    onSearch: (String) -> Unit = {},
+    searchQuery: String = ""
 ) {
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
+    Column(
+        modifier = modifier
     ) {
-        when (val screenState = getState()) {
-            is Loading -> {
-                Text(
-                    text = "Грузится"
-                )
-            }
+        val focusManager = LocalFocusManager.current
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            value = searchQuery,
+            onValueChange = onSearch,
+            label = { Text(text = "Search") },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Search
+            ),
+            keyboardActions = KeyboardActions(
+                onSearch = {
+                    onSearch(searchQuery)
+                    focusManager.clearFocus()
+                }
+            )
+        )
 
-            is Empty -> {
-                Text(
-                    text = "Пусто"
-                )
-            }
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            // TODO: Обновить состояния
+            when (val screenState = getState()) {
+                is Loading -> {
+                    Text(
+                        text = "Грузится"
+                    )
+                }
 
-            is Success -> {
-                LazyColumn(modifier = modifier) {
-                    items(screenState.data) { song ->
-                        SongItem(
-                            song = song
-                        )
+                is Empty -> {
+                    Text(
+                        text = "Пусто"
+                    )
+                }
+
+                is Success -> {
+                    LazyColumn(modifier = modifier) {
+                        items(screenState.data) { song ->
+                            SongItem(
+                                song = song
+                            )
+                        }
                     }
                 }
-            }
 
-            else -> {
-                // TODO: Ошибка загрузки списка
-                Column(
-                    modifier = modifier,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "Ошибочка вышла"
-                    )
-                    Button(onClick = onClick) {
-                        Text(text = "Загрузить")
+                else -> {
+                    // TODO: Ошибка загрузки списка
+                    Box(
+                        modifier = modifier,
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Ошибочка вышла"
+                        )
                     }
                 }
             }
@@ -109,5 +140,5 @@ private fun SearchScreenPreview() {
         })
     }
     SearchScreenContent(
-        getState = { Success(songs) }) {}
+        getState = { Success(songs) })
 }
