@@ -6,13 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
@@ -27,11 +23,7 @@ import songbird.apollo.presentation.ui.screens.SearchGraph
 import songbird.apollo.presentation.ui.screens.SearchGraph.SearchScreenRoute
 import songbird.apollo.presentation.ui.screens.favorites.FavoritesScreen
 import songbird.apollo.presentation.ui.screens.library.LibraryScreen
-import songbird.apollo.presentation.ui.screens.scaffold.BottomNavBar
-import songbird.apollo.presentation.ui.screens.scaffold.LocalScaffoldViewModel
-import songbird.apollo.presentation.ui.screens.scaffold.MainTabs
-import songbird.apollo.presentation.ui.screens.scaffold.ScaffoldViewModel
-import songbird.apollo.presentation.ui.screens.scaffold.TopToolBar
+import songbird.apollo.presentation.ui.screens.scaffold.AppScaffold
 import songbird.apollo.presentation.ui.screens.search.SearchScreen
 import songbird.apollo.presentation.ui.theme.ApolloniaTheme
 
@@ -41,7 +33,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ApolloniaTheme (dynamicColor = false) {
+            ApolloniaTheme(dynamicColor = false) {
                 NavApp()
             }
         }
@@ -52,26 +44,10 @@ class MainActivity : ComponentActivity() {
 fun NavApp() {
     val navController = rememberNavController()
 
-    val scaffoldViewModel: ScaffoldViewModel = hiltViewModel()
-    val uiState by scaffoldViewModel.uiState.collectAsState()
-
-    Scaffold(topBar = {
-        if (uiState.showTopBar) {
-            TopToolBar(
-                navigateUp = uiState.navigateUp, title = uiState.topBarTitle
-            )
-        }
-    }, bottomBar = {
-        if (uiState.showBottomBar) {
-            BottomNavBar(
-                navController = navController, tabs = MainTabs
-            )
-        }
-    }) { innerPadding ->
-        CompositionLocalProvider(
-            LocalNavController provides navController,
-            LocalScaffoldViewModel provides scaffoldViewModel
-        ) {
+    CompositionLocalProvider(
+        LocalNavController provides navController,
+    ) {
+        AppScaffold { innerPadding ->
             NavHost(
                 navController = navController,
                 startDestination = FavoriteGraph,
