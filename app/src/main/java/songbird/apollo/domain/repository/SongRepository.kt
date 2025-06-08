@@ -6,4 +6,6 @@ interface SongRepository {
 
     suspend fun getSongs(): List<SongPreview>
 
+    suspend fun searchSongs(query: String): List<SongPreview>
+
 }

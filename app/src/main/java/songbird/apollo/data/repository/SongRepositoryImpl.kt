@@ -16,4 +16,9 @@ class SongRepositoryImpl @Inject constructor(
     override suspend fun getSongs(): List<SongPreview> = wrapRetrofitExceptions {
         songApi.getSongs().data.map { it.toSongPreview() }
     }
+
+    override suspend fun searchSongs(query: String): List<SongPreview> = wrapRetrofitExceptions {
+        songApi.searchSongs(query).data.map { it.toSongPreview() }
+    }
+
 }
