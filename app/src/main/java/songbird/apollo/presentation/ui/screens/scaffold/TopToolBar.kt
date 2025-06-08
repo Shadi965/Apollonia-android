@@ -15,12 +15,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 sealed class NavigateUpAction {
     data object Hidden : NavigateUpAction()
     data class Visible(
         val onClick: () -> Unit
-    ): NavigateUpAction()
+    ) : NavigateUpAction()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,11 +32,13 @@ fun TopToolBar(
 ) {
     Column {
         MediumTopAppBar(
-            title = { Text(
-                text = stringResource(title),
-                color = MaterialTheme.colorScheme.onBackground
-            ) },
-            navigationIcon = {
+            title = {
+                Text(
+                    text = stringResource(title),
+                    fontSize = 28.sp,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }, navigationIcon = {
                 if (navigateUp is NavigateUpAction.Visible) {
                     IconButton(onClick = navigateUp.onClick) {
                         Icon(
@@ -46,8 +49,7 @@ fun TopToolBar(
                         )
                     }
                 }
-            },
-            colors = TopAppBarDefaults.largeTopAppBarColors(
+            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
                 containerColor = MaterialTheme.colorScheme.background,
                 titleContentColor = MaterialTheme.colorScheme.onBackground,
                 navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
