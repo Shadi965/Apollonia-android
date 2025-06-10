@@ -2,14 +2,22 @@ package songbird.apollo.presentation.ui.screens.search
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -43,7 +51,7 @@ fun SearchScreen(modifier: Modifier = Modifier) {
     val searchQuery = viewModel.searchQuery.collectAsState()
     SearchScreenContent(
         modifier = modifier.fillMaxSize(),
-        getState = { state.value },
+        state = state.value,
         onSearch = { viewModel.onSearchQueryChange(it) },
         searchQuery = searchQuery.value
     )
@@ -52,7 +60,7 @@ fun SearchScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun SearchScreenContent(
     modifier: Modifier = Modifier,
-    getState: () -> LoadResult<List<SongPreviewUi>>,
+    state: LoadResult<List<SongPreviewUi>> = Loading,
     onSearch: (String) -> Unit = {},
     searchQuery: String = ""
 ) {
@@ -72,19 +80,36 @@ private fun SearchScreenContent(
                 imeAction = ImeAction.Search
             ),
             keyboardActions = KeyboardActions(
-                onSearch = {
-                    onSearch(searchQuery)
-                    focusManager.clearFocus()
+                onSearch = { focusManager.clearFocus() }
+            ),
+            trailingIcon = {
+                if (searchQuery.isNotEmpty()) {
+                    IconButton(onClick = { onSearch("") }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            // TODO: Добавить описание
+                            contentDescription = null
+                        )
+                    }
                 }
+            },
+            colors = OutlinedTextFieldDefaults.colors().copy(
+                focusedIndicatorColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedIndicatorColor = MaterialTheme.colorScheme.outlineVariant,
+                disabledIndicatorColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                cursorColor = MaterialTheme.colorScheme.onSurface,
+                focusedLabelColor = MaterialTheme.colorScheme.onSurface
             )
         )
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             // TODO: Обновить состояния
-            when (val screenState = getState()) {
+            when (state) {
                 is Loading -> {
                     Text(
                         text = "Грузится"
@@ -98,8 +123,8 @@ private fun SearchScreenContent(
                 }
 
                 is Success -> {
-                    LazyColumn(modifier = modifier) {
-                        items(screenState.data) { song ->
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        items(state.data) { song ->
                             SongItem(
                                 song = song
                             )
@@ -140,5 +165,5 @@ private fun SearchScreenPreview() {
         })
     }
     SearchScreenContent(
-        getState = { Success(songs) })
+        state = Success(songs))
 }
