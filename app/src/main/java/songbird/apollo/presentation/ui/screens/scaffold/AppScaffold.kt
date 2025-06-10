@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import songbird.apollo.presentation.ui.screens.LocalNavController
+import songbird.apollo.presentation.ui.screens.SettingsScreenRoute
 
 @Composable
 fun AppScaffold(
@@ -25,8 +26,12 @@ fun AppScaffold(
         topBar = {
             if (uiState.showTopBar) {
                 TopToolBar(
-                    navigateUp = uiState.navigateUp,
-                    title = uiState.topBarTitle
+                    navigateUp = uiState.showNavigateUp,
+                    title = uiState.topBarTitle,
+                    toSettingsScreen = NavigateAction.Enable {
+                        navController.navigate(SettingsScreenRoute)
+                    },
+                    showSettingsButton = uiState.showSettingsButton,
                 )
             }
         }, bottomBar = {

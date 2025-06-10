@@ -25,3 +25,6 @@ data object SearchGraph : AppGraph {
     @Serializable
     data object SearchScreenRoute : AppRoute
 }
+
+@Serializable
+data object SettingsScreenRoute : AppRoute

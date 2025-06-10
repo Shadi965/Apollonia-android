@@ -21,10 +21,12 @@ import songbird.apollo.presentation.ui.screens.LibraryGraph.LibraryScreenRoute
 import songbird.apollo.presentation.ui.screens.LocalNavController
 import songbird.apollo.presentation.ui.screens.SearchGraph
 import songbird.apollo.presentation.ui.screens.SearchGraph.SearchScreenRoute
+import songbird.apollo.presentation.ui.screens.SettingsScreenRoute
 import songbird.apollo.presentation.ui.screens.favorites.FavoritesScreen
 import songbird.apollo.presentation.ui.screens.library.LibraryScreen
 import songbird.apollo.presentation.ui.screens.scaffold.AppScaffold
 import songbird.apollo.presentation.ui.screens.search.SearchScreen
+import songbird.apollo.presentation.ui.screens.settings.SettingsScreen
 import songbird.apollo.presentation.ui.theme.ApolloniaTheme
 
 @AndroidEntryPoint
@@ -66,6 +68,7 @@ fun NavApp() {
                 navigation<SearchGraph>(startDestination = SearchScreenRoute) {
                     composable<SearchScreenRoute> { SearchScreen() }
                 }
+                composable<SettingsScreenRoute> { SettingsScreen() }
             }
         }
     }

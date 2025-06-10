@@ -27,7 +27,8 @@ class ScaffoldViewModel @Inject constructor() : ViewModel() {
 data class ScaffoldUiState(
     val showTopBar: Boolean = true,
     val showBottomBar: Boolean = true,
-    val navigateUp: NavigateUpAction = NavigateUpAction.Hidden,
+    val showNavigateUp: Boolean = false,
+    val showSettingsButton: Boolean = true,
     @StringRes val topBarTitle: Int = android.R.string.untitled
 )
 
@@ -39,7 +40,8 @@ val LocalScaffoldViewModel = staticCompositionLocalOf<ScaffoldViewModel?> {
 fun ModifyScaffoldUi(
     showTopBar: Boolean = true,
     showBottomBar: Boolean = true,
-    navigateUp: NavigateUpAction = NavigateUpAction.Hidden,
+    showNavigateUp: Boolean = false,
+    showSettingsButton: Boolean = true,
     @StringRes topBarTitle: Int = android.R.string.untitled
 ) {
     val viewModel = LocalScaffoldViewModel.current
@@ -53,7 +55,8 @@ fun ModifyScaffoldUi(
                     ScaffoldUiState(
                         showTopBar = showTopBar,
                         showBottomBar = showBottomBar,
-                        navigateUp = navigateUp,
+                        showNavigateUp = showNavigateUp,
+                        showSettingsButton = showSettingsButton,
                         topBarTitle = topBarTitle
                     )
                 )
