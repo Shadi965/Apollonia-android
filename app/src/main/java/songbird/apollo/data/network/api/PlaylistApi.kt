@@ -45,7 +45,7 @@ interface PlaylistApi {
         @Query("playlist_id") playlistId: Int,
         @Query("song_id") songId: Int,
         @Query("position") position: Double
-    ): ApiResponse<Double?>
+    ): ApiResponse<EmptyResponse?>
 
     @DELETE("playlist/song/")
     suspend fun removeSongFromPlaylist(
