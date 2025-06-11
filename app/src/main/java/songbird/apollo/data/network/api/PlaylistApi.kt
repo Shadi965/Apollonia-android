@@ -40,7 +40,7 @@ interface PlaylistApi {
         @Path("playlist_id") playlistId: Int,
     ): ApiResponse<EmptyResponse?>
 
-    @POST("/playlist/song/")
+    @POST("playlist/song/")
     suspend fun addSongToPlaylist(
         @Query("playlist_id") playlistId: Int,
         @Query("song_id") songId: Int,
