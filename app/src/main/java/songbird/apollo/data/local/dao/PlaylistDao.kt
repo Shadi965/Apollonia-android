@@ -34,16 +34,18 @@ interface PlaylistDao {
     @Delete
     suspend fun delete(playlist: PlaylistEntity)
 
-
-
     @Query("""
         SELECT s.id, s.title, s.artist, s.album_id, ps.position
         FROM songs s
         INNER JOIN playlist_songs ps
         ON s.id = ps.song_id
         WHERE ps.playlist_id = :playlistId
+        ORDER BY ps.position
     """)
     fun getSongsFromPlaylist(playlistId: Int): Flow<List<PositionedSong>>
+
+    @Query("SELECT * FROM playlist_songs WHERE playlist_id = :playlistId")
+    suspend fun getPlaylistSongs(playlistId: Int): List<PlaylistSongsEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSong(song: PlaylistSongsEntity)
