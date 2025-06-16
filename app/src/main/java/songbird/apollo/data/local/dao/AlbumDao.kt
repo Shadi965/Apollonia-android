@@ -17,10 +17,10 @@ interface AlbumDao {
     @Query("SELECT * FROM albums WHERE id = :id")
     fun getAlbum(id: Int): Flow<AlbumEntity?>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(albums: List<AlbumEntity>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(album: AlbumEntity)
 
     @Query("DELETE FROM albums WHERE id = :id")
@@ -28,5 +28,7 @@ interface AlbumDao {
 
     @Query("SELECT id, title, artist, album_id FROM songs WHERE album_id = :albumId")
     fun getSongsFromAlbum(albumId: Int): Flow<List<SongPreviewTuple>>
-    
+
+    @Query("SELECT EXISTS(SELECT 1 FROM albums WHERE id = :id)")
+    suspend fun isAlbumExists(id: Int): Boolean
 }

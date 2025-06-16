@@ -17,13 +17,16 @@ interface SongDao {
     @Query("SELECT * FROM songs WHERE id = :id")
     fun getSong(id: Int): Flow<SongEntity?>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(songs: List<SongEntity>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(song: SongEntity)
 
     @Query("DELETE FROM songs WHERE id = :id")
     suspend fun delete(id: Int)
+
+    @Query("SELECT EXISTS(SELECT 1 FROM songs WHERE id = :id)")
+    suspend fun isSongExists(id: Int): Boolean
 
 }
