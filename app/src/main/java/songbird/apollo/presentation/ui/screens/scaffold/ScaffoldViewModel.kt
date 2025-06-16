@@ -1,6 +1,5 @@
 package songbird.apollo.presentation.ui.screens.scaffold
 
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -50,7 +49,6 @@ fun ModifyScaffoldUi(
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_START) {
-                Log.d("Tag", "ON_RESUME triggered")
                 viewModel?.updateUiState(
                     ScaffoldUiState(
                         showTopBar = showTopBar,
