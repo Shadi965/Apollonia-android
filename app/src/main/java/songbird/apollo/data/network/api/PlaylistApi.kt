@@ -53,6 +53,13 @@ interface PlaylistApi {
         @Query("song_id") songId: Int,
     ): ApiResponse<EmptyResponse?>
 
+    @PATCH("playlist/{playlist_id}/song/")
+    suspend fun updateSongPosition(
+        @Path("playlist_id") playlistId: Int,
+        @Query("song_id") songId: Int,
+        @Query("position") position: Double
+    ): ApiResponse<EmptyResponse?>
+
     @GET("playlist/{playlist_id}/songs")
     suspend fun getSongs(
         @Path("playlist_id") playlistId: Int,
