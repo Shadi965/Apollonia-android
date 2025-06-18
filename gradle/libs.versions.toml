@@ -5,12 +5,13 @@ coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.9.0"
+lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
-composeBom = "2025.05.01"
+composeBom = "2025.06.00"
 
 immutableCollections = "0.3.8"
 navCompose = "2.9.0"
+materialNavigation = "1.8.2"
 ksp = "2.1.20-2.0.0"
 hilt = "2.56.2"
 hiltNavCompose = "1.2.0"
@@ -48,6 +49,7 @@ square-moshi-kotlin-codegen = { group = "com.squareup.moshi", name = "moshi-kotl
 
 kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "immutableCollections" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navCompose" }
+androidx-compose-material-navigation = { group = "androidx.compose.material", name = "material-navigation", version.ref = "materialNavigation" }
 kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "ktxSerialization" }
 
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }

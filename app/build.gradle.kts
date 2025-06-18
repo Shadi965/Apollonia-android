@@ -50,7 +50,9 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.compose.material.navigation)
     implementation(libs.kotlinx.collections.immutable)
+
 
     implementation(libs.androidx.room)
     ksp(libs.androidx.room.compiler)

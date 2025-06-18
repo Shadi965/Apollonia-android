@@ -16,7 +16,9 @@ import songbird.apollo.presentation.ui.LoadResult
 import songbird.apollo.presentation.ui.LoadResult.Empty
 import songbird.apollo.presentation.ui.LoadResult.Loading
 import songbird.apollo.presentation.ui.LoadResult.Success
+import songbird.apollo.presentation.ui.screens.LocalNavController
 import songbird.apollo.presentation.ui.screens.SongItem
+import songbird.apollo.presentation.ui.screens.SongMenuRoute
 import songbird.apollo.presentation.ui.screens.scaffold.ModifyScaffoldUi
 
 @Composable
@@ -39,9 +41,11 @@ private fun FavoritesScreenContent(
     modifier: Modifier = Modifier,
     favorites: LoadResult<List<SongPreviewUi>>
 ) {
+    // TODO: Тут разобраться
+    val navController = LocalNavController.current
     when (favorites) {
 
-        is Loading, is Empty  -> {
+        is Loading, is Empty -> {
             Text(
                 text = "Пусто"
             )
@@ -51,7 +55,17 @@ private fun FavoritesScreenContent(
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(favorites.data) { song ->
                     SongItem(
-                        song = song
+                        song = song,
+                        onMoreClick = {
+                            navController.navigate(
+                                SongMenuRoute(
+                                    songTitle = song.title,
+                                    songArtist = song.artist,
+                                    albumName = "AlbomBom",
+                                    coverUrl = song.coverUrl
+                                )
+                            )
+                        },
                     )
                 }
             }

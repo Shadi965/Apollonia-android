@@ -37,7 +37,9 @@ import songbird.apollo.presentation.ui.LoadResult
 import songbird.apollo.presentation.ui.LoadResult.Empty
 import songbird.apollo.presentation.ui.LoadResult.Loading
 import songbird.apollo.presentation.ui.LoadResult.Success
+import songbird.apollo.presentation.ui.screens.LocalNavController
 import songbird.apollo.presentation.ui.screens.SongItem
+import songbird.apollo.presentation.ui.screens.SongMenuRoute
 import songbird.apollo.presentation.ui.screens.scaffold.ModifyScaffoldUi
 
 @Composable
@@ -64,6 +66,8 @@ private fun SearchScreenContent(
     onSearch: (String) -> Unit = {},
     searchQuery: String = ""
 ) {
+    // TODO: Здесь тоже пожалуй стоит вынести navController
+    val navController = LocalNavController.current
     Column(
         modifier = modifier
     ) {
@@ -126,7 +130,17 @@ private fun SearchScreenContent(
                     LazyColumn(modifier = Modifier.fillMaxSize()) {
                         items(state.data) { song ->
                             SongItem(
-                                song = song
+                                song = song,
+                                onMoreClick = {
+                                    navController.navigate(
+                                        SongMenuRoute(
+                                            songTitle = song.title,
+                                            songArtist = song.artist,
+                                            albumName = "AlbomBom",
+                                            coverUrl = song.coverUrl
+                                        )
+                                    )
+                                },
                             )
                         }
                     }
