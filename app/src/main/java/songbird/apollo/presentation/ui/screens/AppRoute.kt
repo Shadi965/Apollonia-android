@@ -31,8 +31,6 @@ data object SettingsScreenRoute : AppRoute
 
 @Serializable
 data class SongMenuRoute(
-    val songTitle: String,
-    val songArtist: String,
-    val albumName: String,
-    val coverUrl: String?,
+    val songId: Int,
+    val currentPlaylistId: Int? = null,
 ) : AppRoute

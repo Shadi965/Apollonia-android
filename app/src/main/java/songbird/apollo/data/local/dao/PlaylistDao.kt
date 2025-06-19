@@ -39,13 +39,22 @@ interface PlaylistDao {
         FROM songs s
         INNER JOIN playlist_songs ps
         ON s.id = ps.song_id
-        WHERE ps.playlist_id = :playlistId
+        WHERE ps.playlist_id = :playlistId AND ps.sync_status != "DELETED"
         ORDER BY ps.position
     """)
     fun getSongsFromPlaylist(playlistId: Int): Flow<List<PositionedSong>>
 
     @Query("SELECT * FROM playlist_songs WHERE playlist_id = :playlistId")
     suspend fun getPlaylistSongs(playlistId: Int): List<PlaylistSongsEntity>
+
+    @Query("SELECT MAX(position) FROM playlist_songs WHERE playlist_id = :playlistId")
+    suspend fun maxPosition(playlistId: Int): Double?
+
+    @Query("SELECT MIN(position) FROM playlist_songs WHERE playlist_id = :playlistId")
+    suspend fun minPosition(playlistId: Int): Double?
+
+    @Query("SELECT playlist_id FROM playlist_songs WHERE song_id = :songId AND sync_status != 'DELETED'")
+    suspend fun getSongPlaylists(songId: Int): List<Int>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSong(song: PlaylistSongsEntity)

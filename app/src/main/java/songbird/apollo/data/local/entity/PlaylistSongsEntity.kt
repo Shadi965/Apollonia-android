@@ -32,6 +32,6 @@ data class PlaylistSongsEntity(
     @ColumnInfo(name = "playlist_id") val playlistId: Int,
     @ColumnInfo(name = "song_id") val songId: Int,
 
-    val position: Double,
+    val position: Double?,
     @ColumnInfo(name = "sync_status") val syncStatus: SyncStatus
 )

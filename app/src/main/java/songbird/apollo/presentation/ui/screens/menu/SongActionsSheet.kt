@@ -16,11 +16,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,19 +34,65 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
+import songbird.apollo.presentation.ui.LoadResult.Success
+import songbird.apollo.presentation.ui.screens.LocalNavController
 
 @Composable
-fun SongMenuScreen(
+fun SongActions(
+    songId: Int,
+    currentPlaylistId: Int? = null,
+) {
+    val viewModel = hiltViewModel<SongActionsViewModel, SongActionsViewModel.Factory> { factory ->
+        factory.create(songId, currentPlaylistId)
+    }
+    val navController = LocalNavController.current
+
+    val state = viewModel.song.collectAsState()
+
+    when (val songResult = state.value.song) {
+        is Success -> {
+            SongActionsSheet(
+                songTitle = songResult.data.title,
+                songArtist = songResult.data.artist,
+                albumName = state.value.albumName,
+                coverUrl = songResult.data.coverUrl,
+                isFavorite = state.value.isFavorite,
+                onDismiss = { navController.popBackStack() },
+                toFavorite = if (state.value.isFavorite) {
+                    { viewModel.removeFromFavorites() }
+                } else {
+                    { viewModel.addToFavorites() }
+                }
+            )
+        }
+        else -> {
+            SongActionsSheet(
+                songTitle = "",
+                songArtist = "",
+                albumName = "",
+                coverUrl = null,
+                onDismiss = { navController.popBackStack() }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SongActionsSheet(
     songTitle: String,
     songArtist: String,
     albumName: String,
     coverUrl: String?,
+    isFavorite: Boolean = false,
     onDismiss: () -> Unit,
     onPlay: () -> Unit = {},
+    toFavorite: () -> Unit = {},
     onAddToPlaylist: () -> Unit = {},
     onDownload: () -> Unit = {}
-) {
+) = ModalBottomSheet(onDismiss) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -57,7 +108,6 @@ fun SongMenuScreen(
                 .navigationBarsPadding(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Обложка
             Box(
                 modifier = Modifier
                     .size(72.dp)
@@ -66,7 +116,8 @@ fun SongMenuScreen(
             ) {
                 AsyncImage(
                     model = coverUrl,
-                    contentDescription = "Обложка песни",
+                    // TODO: Описание
+                    contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
@@ -74,7 +125,6 @@ fun SongMenuScreen(
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // Информация о песне
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center
@@ -107,44 +157,62 @@ fun SongMenuScreen(
 
         Spacer(Modifier.height(16.dp))
 
+        // TODO: Удалить если и так в избранном
+        // TODO: Иконку удаления поправить
+        SongMenuItem(
+            icon = if (isFavorite) Icons.Default.Clear else Icons.Default.Favorite,
+            text = if (isFavorite) "Удалить из избранного" else "Добавить в избранное",
+            onClick = toFavorite
+        )
         SongMenuItem(
             icon = Icons.Default.Add,
             text = "Добавить в плейлист",
-            onClick = onAddToPlaylist
+            onClick = onAddToPlaylist,
+            enabled = false
         )
+        // TODO: Удалить если уже скачано
         SongMenuItem(
             // TODO: Типо скачать, заменить иконку
             icon = Icons.Default.KeyboardArrowDown,
             text = "Скачать",
-            onClick = onDownload
+            onClick = onDownload,
+            enabled = false
         )
     }
 }
 
 @Composable
-fun SongMenuItem(
+private fun SongMenuItem(
     icon: ImageVector,
     text: String,
     onClick: () -> Unit,
+    enabled: Boolean = true
 ) {
+    val contentAlpha = if (enabled) 1f else 0.4f
+    val textColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = contentAlpha)
+    val iconTint = MaterialTheme.colorScheme.onSurface.copy(alpha = contentAlpha)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .let {
+                if (enabled) it.clickable(onClick = onClick)
+                else it
+            }
             .padding(vertical = 12.dp, horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurface,
+            tint = iconTint,
             modifier = Modifier.size(24.dp)
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(
             text = text,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = textColor
         )
     }
 }

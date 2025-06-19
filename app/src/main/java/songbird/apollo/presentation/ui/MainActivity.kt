@@ -1,3 +1,5 @@
+@file:Suppress("UsingMaterialAndMaterial3Libraries")
+
 package songbird.apollo.presentation.ui
 
 import android.os.Bundle
@@ -9,8 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.navigation.ModalBottomSheetLayout
 import androidx.compose.material.navigation.bottomSheet
 import androidx.compose.material.navigation.rememberBottomSheetNavigator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -31,7 +31,7 @@ import songbird.apollo.presentation.ui.screens.SettingsScreenRoute
 import songbird.apollo.presentation.ui.screens.SongMenuRoute
 import songbird.apollo.presentation.ui.screens.favorites.FavoritesScreen
 import songbird.apollo.presentation.ui.screens.library.LibraryScreen
-import songbird.apollo.presentation.ui.screens.menu.SongMenuScreen
+import songbird.apollo.presentation.ui.screens.menu.SongActions
 import songbird.apollo.presentation.ui.screens.scaffold.AppScaffold
 import songbird.apollo.presentation.ui.screens.search.SearchScreen
 import songbird.apollo.presentation.ui.screens.settings.SettingsScreen
@@ -50,7 +50,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavApp() {
     val sheetNavigator = rememberBottomSheetNavigator()
@@ -86,17 +85,10 @@ fun NavApp() {
 
                     bottomSheet<SongMenuRoute> { backStackEntry ->
                         val route: SongMenuRoute = backStackEntry.toRoute()
-                        ModalBottomSheet(
-                            onDismissRequest = { navController.popBackStack() }
-                        ) {
-                            SongMenuScreen(
-                                songTitle = route.songTitle,
-                                songArtist = route.songArtist,
-                                coverUrl = route.coverUrl,
-                                albumName = route.albumName,
-                                onDismiss = { navController.popBackStack() }
-                            )
-                        }
+                        SongActions(
+                            songId = route.songId,
+                            currentPlaylistId = route.currentPlaylistId,
+                        )
                     }
                 }
             }

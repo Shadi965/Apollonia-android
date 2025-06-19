@@ -15,7 +15,7 @@ interface SongDao {
     fun getSongs(): Flow<List<SongPreviewTuple>>
 
     @Query("SELECT * FROM songs WHERE id = :id")
-    fun getSong(id: Int): Flow<SongEntity?>
+    fun getSong(id: Int): SongEntity?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(songs: List<SongEntity>)

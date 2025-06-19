@@ -58,11 +58,10 @@ private fun FavoritesScreenContent(
                         song = song,
                         onMoreClick = {
                             navController.navigate(
+                                // TODO: Favorites - playlist 1
                                 SongMenuRoute(
-                                    songTitle = song.title,
-                                    songArtist = song.artist,
-                                    albumName = "AlbomBom",
-                                    coverUrl = song.coverUrl
+                                    songId = song.id,
+                                    currentPlaylistId = 1
                                 )
                             )
                         },

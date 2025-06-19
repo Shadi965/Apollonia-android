@@ -9,6 +9,7 @@ import songbird.apollo.data.network.URL
 import songbird.apollo.data.network.dto.AlbumDto
 import songbird.apollo.data.network.dto.PlaylistDto
 import songbird.apollo.data.network.dto.SongDto
+import songbird.apollo.domain.model.Album
 import songbird.apollo.domain.model.Song
 import songbird.apollo.domain.model.SongPreview
 
@@ -50,6 +51,21 @@ fun SongDto.toSongPreview() = SongPreview(
     coverUrl = "$URL/album/cover/${albumId}"
 )
 
+fun SongEntity.toSong() = Song(
+    id,
+    title,
+    artist,
+    composer,
+    albumId,
+    track,
+    disc,
+    date,
+    copyright,
+    genre,
+    duration,
+    coverUrl = "$URL/album/cover/${albumId}"
+)
+
 fun PositionedSong.toSongPreview() = SongPreview(
     song.id,
     song.title,
@@ -60,6 +76,17 @@ fun PositionedSong.toSongPreview() = SongPreview(
 )
 
 fun AlbumDto.toEntity() = AlbumEntity(
+    id,
+    title,
+    artist,
+    trackCount,
+    discCount,
+    date,
+    copyright,
+    genre
+)
+
+fun AlbumEntity.toAlbum() = Album(
     id,
     title,
     artist,

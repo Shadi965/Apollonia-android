@@ -9,4 +9,10 @@ interface PlaylistRepository {
 
     suspend fun syncPlaylists()
 
+    suspend fun addToFavorites(songId: Int)
+
+    suspend fun removeFromFavorites(songId: Int)
+
+    suspend fun getSongPlaylists(songId: Int): List<Int>
+
 }

@@ -134,10 +134,7 @@ private fun SearchScreenContent(
                                 onMoreClick = {
                                     navController.navigate(
                                         SongMenuRoute(
-                                            songTitle = song.title,
-                                            songArtist = song.artist,
-                                            albumName = "AlbomBom",
-                                            coverUrl = song.coverUrl
+                                            songId = song.id
                                         )
                                     )
                                 },

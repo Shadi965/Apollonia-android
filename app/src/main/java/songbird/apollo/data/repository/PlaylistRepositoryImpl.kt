@@ -3,6 +3,7 @@ package songbird.apollo.data.repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import retrofit2.HttpException
 import songbird.apollo.data.local.SyncStatus
 import songbird.apollo.data.local.dao.AlbumDao
 import songbird.apollo.data.local.dao.PlaylistDao
@@ -29,7 +30,7 @@ class PlaylistRepositoryImpl @Inject constructor(
     private val songDao: SongDao,
     private val albumDao: AlbumDao,
     private val playlistApi: PlaylistApi,
-    private val  songApi: SongApi,
+    private val songApi: SongApi,
     private val albumApi: AlbumApi
 ) : PlaylistRepository {
 
@@ -38,6 +39,24 @@ class PlaylistRepositoryImpl @Inject constructor(
         return playlistDao.getSongsFromPlaylist(1).map { songs ->
             songs.map { it.toSongPreview() }
         }
+    }
+
+    override suspend fun getSongPlaylists(songId: Int): List<Int> {
+        return playlistDao.getSongPlaylists(songId)
+    }
+
+    override suspend fun addToFavorites(songId: Int) {
+        val song = songApi.getSong(songId).data!!
+        val album = albumApi.getAlbum(song.albumId).data!!
+        addNewAlbum(album)
+        addNewSong(song)
+        var pos = playlistDao.minPosition(1) ?: 2.0
+        --pos;
+        playlistDao.insertSong(PlaylistSongsEntity(1, songId, pos, SyncStatus.CREATED))
+    }
+
+    override suspend fun removeFromFavorites(songId: Int) {
+        playlistDao.updateSong(PlaylistSongsEntity(1, songId, null, SyncStatus.DELETED))
     }
 
     // TODO: Не забыть поправить синхронизацию
@@ -57,7 +76,7 @@ class PlaylistRepositoryImpl @Inject constructor(
         for (playlist in localPlaylists.filter { it.syncStatus == SyncStatus.CREATED }) {
             val response = playlistApi.newPlaylist(playlist.name)
             if (response.status == "success") {
-                playlistDao.changePlaylistId(playlist.id, response.data.id)
+                playlistDao.changePlaylistId(playlist.id, response.data!!.id)
                 playlistDao.update(
                     playlist.copy(
                         id = response.data.id,
@@ -79,9 +98,14 @@ class PlaylistRepositoryImpl @Inject constructor(
 
     private suspend fun syncDeletedPlaylists(localPlaylists: List<PlaylistEntity>) {
         for (playlist in localPlaylists.filter { it.syncStatus == SyncStatus.DELETED }) {
-            val response = playlistApi.deletePlaylist(playlist.id)
-            if (response.status == "success")
+            try {
+                playlistApi.deletePlaylist(playlist.id)
                 playlistDao.delete(playlist)
+            } catch (e: HttpException) {
+                if (e.code() == 404)
+                    playlistDao.delete(playlist)
+                else throw e
+            }
         }
     }
 
@@ -94,7 +118,7 @@ class PlaylistRepositoryImpl @Inject constructor(
                     // TODO: Позиции необходимо дополнительно проверять
                     SyncStatus.CREATED -> {
                         val response =
-                            playlistApi.addSongToPlaylist(playlist.id, song.songId, song.position)
+                            playlistApi.addSongToPlaylist(playlist.id, song.songId, song.position!!)
                         if (response.status == "success")
                             playlistDao.updateSong(
                                 song.copy(
@@ -105,7 +129,7 @@ class PlaylistRepositoryImpl @Inject constructor(
 
                     SyncStatus.UPDATED -> {
                         val response =
-                            playlistApi.updateSongPosition(playlist.id, song.songId, song.position)
+                            playlistApi.updateSongPosition(playlist.id, song.songId, song.position!!)
                         if (response.status == "success")
                             playlistDao.updateSong(
                                 song.copy(
@@ -115,9 +139,14 @@ class PlaylistRepositoryImpl @Inject constructor(
                     }
 
                     SyncStatus.DELETED -> {
-                        val response = playlistApi.removeSongFromPlaylist(playlist.id, song.songId)
-                        if (response.status == "success")
+                        try {
+                            playlistApi.removeSongFromPlaylist(playlist.id, song.songId)
                             playlistDao.deleteSong(song)
+                        } catch (e: HttpException) {
+                            if (e.code() == 404)
+                                playlistDao.deleteSong(song)
+                            else throw e
+                        }
                     }
 
                     else -> Unit
@@ -127,7 +156,7 @@ class PlaylistRepositoryImpl @Inject constructor(
     }
 
     private suspend fun loadFromServer() {
-        val remotePlaylists = playlistApi.getPlaylists().data
+        val remotePlaylists = playlistApi.getPlaylists().data!!
         val localPlaylists = playlistDao.getPlaylists().first()
 
         removeDeletedPlaylists(localPlaylists, remotePlaylists)
@@ -184,14 +213,14 @@ class PlaylistRepositoryImpl @Inject constructor(
 
     private suspend fun syncSongsInPlaylists(remotePlaylists: List<PlaylistDto>) {
         for (playlist in remotePlaylists) {
-            val remoteSongs = playlistApi.getSongs(playlist.id).data
+            val remoteSongs = playlistApi.getSongs(playlist.id).data!!
             val localSongs = playlistDao.getPlaylistSongs(playlist.id)
             val remoteIds = remoteSongs.map { it.songId }.toSet()
 
             // TODO: Мегабардак
             for (songId in remoteIds) {
-                val song = songApi.getSong(songId).data
-                val album = albumApi.getAlbum(song.albumId).data
+                val song = songApi.getSong(songId).data!!
+                val album = albumApi.getAlbum(song.albumId).data!!
                 addNewAlbum(album)
                 addNewSong(song)
             }

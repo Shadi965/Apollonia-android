@@ -34,7 +34,7 @@ data class SongPreviewUi(
     val isDownloaded: Boolean,
 )
 
-fun Song.toUi() = SongUi(
+fun Song.toUi(isDownloaded: Boolean = false) = SongUi(
     id = id,
     title = title,
     artist = artist,
@@ -47,7 +47,7 @@ fun Song.toUi() = SongUi(
     genre = genre,
     duration = duration,
     coverUrl = coverUrl,
-    isDownloaded = false
+    isDownloaded = isDownloaded
 )
 
 fun SongPreview.toUi() = SongPreviewUi(
