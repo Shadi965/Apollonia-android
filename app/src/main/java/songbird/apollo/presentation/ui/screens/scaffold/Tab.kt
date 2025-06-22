@@ -3,7 +3,7 @@ package songbird.apollo.presentation.ui.screens.scaffold
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 import kotlinx.collections.immutable.persistentListOf
@@ -22,8 +22,7 @@ data class AppTab(
 
 val MainTabs = persistentListOf(
     AppTab(
-        // TODO: Иконку заменить
-        icon = Icons.Default.Home,
+        icon = Icons.Default.LibraryMusic,
         labelRes = R.string.library,
         graph = LibraryGraph
     ),

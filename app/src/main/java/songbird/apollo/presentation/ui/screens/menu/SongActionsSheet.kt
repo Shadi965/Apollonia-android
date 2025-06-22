@@ -16,9 +16,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.HeartBroken
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -157,10 +157,8 @@ private fun SongActionsSheet(
 
         Spacer(Modifier.height(16.dp))
 
-        // TODO: Удалить если и так в избранном
-        // TODO: Иконку удаления поправить
         SongMenuItem(
-            icon = if (isFavorite) Icons.Default.Clear else Icons.Default.Favorite,
+            icon = if (isFavorite) Icons.Default.HeartBroken else Icons.Default.Favorite,
             text = if (isFavorite) "Удалить из избранного" else "Добавить в избранное",
             onClick = toFavorite
         )
@@ -173,7 +171,7 @@ private fun SongActionsSheet(
         // TODO: Удалить если уже скачано
         SongMenuItem(
             // TODO: Типо скачать, заменить иконку
-            icon = Icons.Default.KeyboardArrowDown,
+            icon = Icons.Default.Download,
             text = "Скачать",
             onClick = onDownload,
             enabled = false
