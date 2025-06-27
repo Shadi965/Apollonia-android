@@ -40,6 +40,7 @@ import songbird.apollo.presentation.ui.LoadResult.Error
 import songbird.apollo.presentation.ui.LoadResult.Loading
 import songbird.apollo.presentation.ui.LoadResult.Success
 import songbird.apollo.presentation.ui.screens.LocalNavController
+import songbird.apollo.presentation.ui.screens.PlayerScreenRoute
 import songbird.apollo.presentation.ui.screens.SongItem
 import songbird.apollo.presentation.ui.screens.SongMenuRoute
 import songbird.apollo.presentation.ui.screens.scaffold.ModifyScaffoldUi
@@ -67,6 +68,11 @@ fun SearchScreen(modifier: Modifier = Modifier) {
                     songId = songId
                 )
             )
+        },
+        onSongClick = { songId ->
+            navController.navigate(
+                PlayerScreenRoute(songId)
+            )
         }
     )
 }
@@ -77,6 +83,7 @@ private fun SearchScreenContent(
     songsState: LoadResult<List<SongPreviewUi>> = Empty,
     onSearch: (String) -> Unit = {},
     onSongMoreClick: (songId: Int) -> Unit = {},
+    onSongClick: (songId: Int) -> Unit = {},
     searchQuery: String = ""
 ) {
 
@@ -147,7 +154,8 @@ private fun SearchScreenContent(
                                 onMoreClick = {
                                     focusManager.clearFocus()
                                     onSongMoreClick(it)
-                                }
+                                },
+                                onClick = onSongClick
                             )
                         }
                     }
@@ -159,7 +167,7 @@ private fun SearchScreenContent(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = songsState.message?: "Unknown error",
+                            text = songsState.message ?: "Unknown error",
                         )
                     }
                 }
@@ -185,5 +193,6 @@ private fun SearchScreenPreview() {
         })
     }
     SearchScreenContent(
-        songsState = Success(songs))
+        songsState = Success(songs)
+    )
 }

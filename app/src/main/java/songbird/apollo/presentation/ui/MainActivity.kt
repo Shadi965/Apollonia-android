@@ -28,6 +28,7 @@ import songbird.apollo.presentation.ui.screens.FavoriteGraph.FavoriteScreenRoute
 import songbird.apollo.presentation.ui.screens.LibraryGraph
 import songbird.apollo.presentation.ui.screens.LibraryGraph.LibraryScreenRoute
 import songbird.apollo.presentation.ui.screens.LocalNavController
+import songbird.apollo.presentation.ui.screens.PlayerScreenRoute
 import songbird.apollo.presentation.ui.screens.SearchGraph
 import songbird.apollo.presentation.ui.screens.SearchGraph.SearchScreenRoute
 import songbird.apollo.presentation.ui.screens.SettingsScreenRoute
@@ -35,6 +36,7 @@ import songbird.apollo.presentation.ui.screens.SongMenuRoute
 import songbird.apollo.presentation.ui.screens.favorites.FavoritesScreen
 import songbird.apollo.presentation.ui.screens.library.LibraryScreen
 import songbird.apollo.presentation.ui.screens.menu.SongActions
+import songbird.apollo.presentation.ui.screens.player.PlayerScreen
 import songbird.apollo.presentation.ui.screens.scaffold.AppScaffold
 import songbird.apollo.presentation.ui.screens.search.SearchScreen
 import songbird.apollo.presentation.ui.screens.settings.SettingsScreen
@@ -96,6 +98,11 @@ fun NavApp() {
                             songId = route.songId,
                             currentPlaylistId = route.currentPlaylistId,
                         )
+                    }
+
+                    composable<PlayerScreenRoute> { backStackEntry ->
+                        val route: PlayerScreenRoute = backStackEntry.toRoute()
+                        PlayerScreen(route.songId)
                     }
                 }
             }

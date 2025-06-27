@@ -14,4 +14,6 @@ interface SongRepository {
     suspend fun getSong(id: Int): Song
 
     suspend fun fetchSong(id: Int): Song
+
+    fun getSongStreamUrl(songId: Int): String
 }

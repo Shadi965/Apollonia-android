@@ -1,6 +1,7 @@
 package songbird.apollo.data.repository
 
 import songbird.apollo.data.local.dao.SongDao
+import songbird.apollo.data.network.URL
 import songbird.apollo.data.network.api.SongApi
 import songbird.apollo.data.network.wrapRetrofitExceptions
 import songbird.apollo.data.toSong
@@ -37,5 +38,10 @@ class SongRepositoryImpl @Inject constructor(
     override suspend fun fetchSong(id: Int): Song = wrapRetrofitExceptions {
         songApi.getSong(id).data!!.toSong()
     }
+
+    override fun getSongStreamUrl(songId: Int): String {
+        return "$URL/stream/$songId"
+    }
+
 
 }

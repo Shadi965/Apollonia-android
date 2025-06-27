@@ -18,6 +18,7 @@ import songbird.apollo.presentation.ui.LoadResult.Error
 import songbird.apollo.presentation.ui.LoadResult.Loading
 import songbird.apollo.presentation.ui.LoadResult.Success
 import songbird.apollo.presentation.ui.screens.LocalNavController
+import songbird.apollo.presentation.ui.screens.PlayerScreenRoute
 import songbird.apollo.presentation.ui.screens.SongItem
 import songbird.apollo.presentation.ui.screens.SongMenuRoute
 import songbird.apollo.presentation.ui.screens.scaffold.ModifyScaffoldUi
@@ -70,6 +71,7 @@ private fun FavoritesScreenContent(
                                 )
                             )
                         },
+                        onClick = { navController.navigate(PlayerScreenRoute(song.id)) }
                     )
                 }
             }

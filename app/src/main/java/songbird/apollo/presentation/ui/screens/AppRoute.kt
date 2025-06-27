@@ -34,3 +34,10 @@ data class SongMenuRoute(
     val songId: Int,
     val currentPlaylistId: Int? = null,
 ) : AppRoute
+
+@Serializable
+data class PlayerScreenRoute(
+    val songId: Int,
+)
+
+
