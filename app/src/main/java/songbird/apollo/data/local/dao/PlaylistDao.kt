@@ -19,6 +19,9 @@ interface PlaylistDao {
     @Query("SELECT * FROM playlists WHERE id = :id")
     fun getPlaylist(id: Int): Flow<PlaylistEntity?>
 
+    @Query("SELECT * FROM playlists WHERE sync_status != 'SYNCED'")
+    fun getChangedPlaylists(): List<PlaylistEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(playlist: PlaylistEntity)
 
@@ -46,6 +49,12 @@ interface PlaylistDao {
 
     @Query("SELECT * FROM playlist_songs WHERE playlist_id = :playlistId")
     suspend fun getPlaylistSongs(playlistId: Int): List<PlaylistSongsEntity>
+
+    @Query("SELECT * FROM playlist_songs WHERE sync_status != 'SYNCED' ORDER BY playlist_id")
+    suspend fun getChangedPlaylistSongs(): List<PlaylistSongsEntity>
+
+    @Query("SELECT * FROM playlist_songs WHERE playlist_id = :playlistId AND song_id = :songId")
+    suspend fun getPlaylistSong(playlistId: Int, songId: Int): PlaylistSongsEntity?
 
     @Query("SELECT MAX(position) FROM playlist_songs WHERE playlist_id = :playlistId")
     suspend fun maxPosition(playlistId: Int): Double?

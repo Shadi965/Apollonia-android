@@ -6,6 +6,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.navigation.ModalBottomSheetLayout
@@ -65,10 +68,14 @@ fun NavApp() {
             AppScaffold { innerPadding ->
                 NavHost(
                     navController = navController,
-                    startDestination = FavoriteGraph,
+                    startDestination = SearchGraph,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(innerPadding)
+                        .padding(innerPadding),
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 100)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 80)) },
+                    popEnterTransition = { fadeIn(animationSpec = tween(durationMillis = 100)) },
+                    popExitTransition = { fadeOut(animationSpec = tween(durationMillis = 80)) },
                 ) {
                     navigation<FavoriteGraph>(
                         startDestination = FavoriteScreenRoute

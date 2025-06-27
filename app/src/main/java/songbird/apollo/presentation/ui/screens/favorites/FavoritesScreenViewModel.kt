@@ -7,9 +7,15 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import songbird.apollo.data.BackendException
+import songbird.apollo.data.ParseBackendResponseException
 import songbird.apollo.domain.usecase.GetFavoritesUseCase
 import songbird.apollo.presentation.model.toUi
-import songbird.apollo.presentation.ui.LoadResult
+import songbird.apollo.presentation.ui.LoadResult.Empty
+import songbird.apollo.presentation.ui.LoadResult.Error
+import songbird.apollo.presentation.ui.LoadResult.Loading
+import songbird.apollo.presentation.ui.LoadResult.Success
+import java.net.ConnectException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,16 +26,19 @@ class FavoritesScreenViewModel @Inject constructor(
     val favorite = getFavoritesUseCase()
         .map { songs ->
             if (songs.isEmpty())
-                LoadResult.Empty
+                Empty
             else
-                LoadResult.Success(songs.map { it.toUi() })
-    }.catch {
-        emit(LoadResult.Error(it.message ?: "Error"))
-    }.stateIn(
+                Success(songs.map { it.toUi() })
+        }.catch {
+            when (it) {
+                is ConnectException -> emit(Error(it, "No internet connection"))
+                is ParseBackendResponseException -> emit(Error(it, "App version is outdated. Please update."))
+                is BackendException -> emit(Error(it, "Server error."))
+                else -> throw it
+            }
+        }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
-            initialValue = LoadResult.Loading)
-
-//    val favorite: StateFlow<LoadResult<List<SongPreviewUi>>> get() = _favorite
-
+            initialValue = Loading
+        )
 }

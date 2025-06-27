@@ -4,10 +4,8 @@ import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonEncodingException
 import retrofit2.HttpException
 import songbird.apollo.data.BackendException
-import songbird.apollo.data.NoConnectionException
 import songbird.apollo.data.ParseBackendResponseException
-import java.io.IOException
-import java.net.ConnectException
+import java.net.SocketTimeoutException
 
 internal const val URL = "http://192.168.0.101"
 
@@ -20,9 +18,7 @@ suspend fun <T> wrapRetrofitExceptions(block: suspend () -> T): T {
         throw ParseBackendResponseException()
     } catch (e: HttpException) {
         throw BackendException(e.code(), e.message, e)
-    } catch (e: ConnectException) {
-        throw BackendException(0, e.message, e)
-    } catch (e: IOException) {
-        throw NoConnectionException()
+    } catch (e: SocketTimeoutException) {
+        throw BackendException(0, "Server is not responding", e)
     }
 }

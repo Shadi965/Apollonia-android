@@ -14,6 +14,7 @@ import songbird.apollo.R
 import songbird.apollo.presentation.model.SongPreviewUi
 import songbird.apollo.presentation.ui.LoadResult
 import songbird.apollo.presentation.ui.LoadResult.Empty
+import songbird.apollo.presentation.ui.LoadResult.Error
 import songbird.apollo.presentation.ui.LoadResult.Loading
 import songbird.apollo.presentation.ui.LoadResult.Success
 import songbird.apollo.presentation.ui.screens.LocalNavController
@@ -41,18 +42,22 @@ private fun FavoritesScreenContent(
     modifier: Modifier = Modifier,
     favorites: LoadResult<List<SongPreviewUi>>
 ) {
-    // TODO: Тут разобраться
     val navController = LocalNavController.current
     when (favorites) {
 
-        is Loading, is Empty -> {
-            Text(
-                text = "Пусто"
-            )
+        is Empty -> {
+            Box(
+                modifier = modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Empty"
+                )
+            }
         }
 
         is Success -> {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(modifier = modifier.fillMaxSize()) {
                 items(favorites.data) { song ->
                     SongItem(
                         song = song,
@@ -70,14 +75,17 @@ private fun FavoritesScreenContent(
             }
         }
 
-        else -> {
-            // TODO: Ошибка загрузки списка
+        is Loading -> {
+            // TODO: Здесь ничего не должно отображаться, нужно анимацией запуска прикрыть загрузку данных
+        }
+
+        is Error -> {
             Box(
-                modifier = modifier,
+                modifier = modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Ошибочка вышла"
+                    text = favorites.message?: "Unknown error",
                 )
             }
         }

@@ -24,6 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -35,6 +36,7 @@ import songbird.apollo.R
 import songbird.apollo.presentation.model.SongPreviewUi
 import songbird.apollo.presentation.ui.LoadResult
 import songbird.apollo.presentation.ui.LoadResult.Empty
+import songbird.apollo.presentation.ui.LoadResult.Error
 import songbird.apollo.presentation.ui.LoadResult.Loading
 import songbird.apollo.presentation.ui.LoadResult.Success
 import songbird.apollo.presentation.ui.screens.LocalNavController
@@ -48,36 +50,49 @@ fun SearchScreen(modifier: Modifier = Modifier) {
         topBarTitle = R.string.search,
     )
 
+    val navController = LocalNavController.current
     val viewModel: SearchScreenViewModel = hiltViewModel()
-    val state = viewModel.foundSongs.collectAsState()
-    val searchQuery = viewModel.searchQuery.collectAsState()
+
+    val songsState by viewModel.foundSongs.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
+
     SearchScreenContent(
         modifier = modifier.fillMaxSize(),
-        state = state.value,
+        songsState = songsState,
+        searchQuery = searchQuery,
         onSearch = { viewModel.onSearchQueryChange(it) },
-        searchQuery = searchQuery.value
+        onSongMoreClick = { songId ->
+            navController.navigate(
+                SongMenuRoute(
+                    songId = songId
+                )
+            )
+        }
     )
 }
 
 @Composable
 private fun SearchScreenContent(
     modifier: Modifier = Modifier,
-    state: LoadResult<List<SongPreviewUi>> = Loading,
+    songsState: LoadResult<List<SongPreviewUi>> = Empty,
     onSearch: (String) -> Unit = {},
+    onSongMoreClick: (songId: Int) -> Unit = {},
     searchQuery: String = ""
 ) {
-    // TODO: Здесь тоже пожалуй стоит вынести navController
-    val navController = LocalNavController.current
+
+    val focusManager = LocalFocusManager.current
+    var songs by remember { mutableStateOf<List<SongPreviewUi>>(emptyList()) }
+
     Column(
         modifier = modifier
     ) {
-        val focusManager = LocalFocusManager.current
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             value = searchQuery,
             onValueChange = onSearch,
+            // TODO: вынести в ресурсы
             label = { Text(text = "Search") },
             singleLine = true,
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -112,45 +127,39 @@ private fun SearchScreenContent(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            // TODO: Обновить состояния
-            when (state) {
-                is Loading -> {
-                    Text(
-                        text = "Грузится"
-                    )
-                }
-
+            // TODO: Надо покрасивее переписать
+            when (songsState) {
                 is Empty -> {
+                    songs = emptyList()
                     Text(
-                        text = "Пусто"
+                        text = if (searchQuery.isEmpty()) "Search songs" else "No songs found"
                     )
                 }
 
-                is Success -> {
+                is Success, is Loading -> {
+                    (songsState as? Success)?.data?.let {
+                        songs = it
+                    }
                     LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        items(state.data) { song ->
+                        items(songs) { song ->
                             SongItem(
                                 song = song,
                                 onMoreClick = {
-                                    navController.navigate(
-                                        SongMenuRoute(
-                                            songId = song.id
-                                        )
-                                    )
-                                },
+                                    focusManager.clearFocus()
+                                    onSongMoreClick(it)
+                                }
                             )
                         }
                     }
                 }
 
-                else -> {
-                    // TODO: Ошибка загрузки списка
+                is Error -> {
                     Box(
                         modifier = modifier,
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Ошибочка вышла"
+                            text = songsState.message?: "Unknown error",
                         )
                     }
                 }
@@ -176,5 +185,5 @@ private fun SearchScreenPreview() {
         })
     }
     SearchScreenContent(
-        state = Success(songs))
+        songsState = Success(songs))
 }

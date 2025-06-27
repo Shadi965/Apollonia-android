@@ -157,22 +157,21 @@ private fun SongActionsSheet(
 
         Spacer(Modifier.height(16.dp))
 
+        // TODO: Добавить в ресурсы
         SongMenuItem(
             icon = if (isFavorite) Icons.Default.HeartBroken else Icons.Default.Favorite,
-            text = if (isFavorite) "Удалить из избранного" else "Добавить в избранное",
+            text = if (isFavorite) "Remove from favorites" else "Add to favorites",
             onClick = toFavorite
         )
         SongMenuItem(
             icon = Icons.Default.Add,
-            text = "Добавить в плейлист",
+            text = "Add to playlist",
             onClick = onAddToPlaylist,
             enabled = false
         )
-        // TODO: Удалить если уже скачано
         SongMenuItem(
-            // TODO: Типо скачать, заменить иконку
             icon = Icons.Default.Download,
-            text = "Скачать",
+            text = "Download",
             onClick = onDownload,
             enabled = false
         )
