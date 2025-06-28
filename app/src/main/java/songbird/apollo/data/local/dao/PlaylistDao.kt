@@ -22,10 +22,10 @@ interface PlaylistDao {
     @Query("SELECT * FROM playlists WHERE sync_status != 'SYNCED'")
     fun getChangedPlaylists(): List<PlaylistEntity>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(playlist: PlaylistEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(playlists: List<PlaylistEntity>)
 
     @Update

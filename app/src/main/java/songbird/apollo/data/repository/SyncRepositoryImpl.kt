@@ -1,6 +1,8 @@
 package songbird.apollo.data.repository
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import songbird.apollo.data.BackendException
 import songbird.apollo.data.local.SyncStatus
 import songbird.apollo.data.local.dao.AlbumDao
@@ -38,10 +40,11 @@ class SyncRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun syncPlaylists() {
+    // TODO: Диспатчеры нужно указать везде
+    override suspend fun syncPlaylists() = withContext(Dispatchers.IO) {
         playlistDao.getChangedPlaylists().forEach{ syncPlaylist(it) }
         syncPlaylistSongs()
-        // TODO: Загрузка списка плейлистов с сервера
+        loadPlaylists()
     }
 
     override suspend fun syncPlaylistSong(playlistId: Int, songId: Int) {
@@ -117,6 +120,14 @@ class SyncRepositoryImpl @Inject constructor(
                 return
         } catch (ex: ConnectException) {
             return
+        }
+    }
+
+    private suspend fun loadPlaylists() = wrapRetrofitExceptions {
+        val playlists = playlistApi.getPlaylists().data!!
+        playlists.forEach {
+            playlistDao.insert(it.toEntity(SyncStatus.SYNCED))
+            loadPlaylistSongs(it.id)
         }
     }
 

@@ -7,9 +7,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import songbird.apollo.data.BackendException
 import songbird.apollo.data.ParseBackendResponseException
 import songbird.apollo.domain.usecase.GetFavoritesUseCase
+import songbird.apollo.domain.usecase.SyncPlaylistsUseCase
 import songbird.apollo.presentation.model.toUi
 import songbird.apollo.presentation.ui.LoadResult.Empty
 import songbird.apollo.presentation.ui.LoadResult.Error
@@ -20,10 +22,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoritesScreenViewModel @Inject constructor(
-    getFavoritesUseCase: GetFavoritesUseCase
+    getFavorites: GetFavoritesUseCase,
+    syncPlaylists: SyncPlaylistsUseCase
 ) : ViewModel() {
 
-    val favorite = getFavoritesUseCase()
+    val favorite = getFavorites()
         .map { songs ->
             if (songs.isEmpty())
                 Empty
@@ -41,4 +44,11 @@ class FavoritesScreenViewModel @Inject constructor(
             started = SharingStarted.Lazily,
             initialValue = Loading
         )
+
+    init {
+        // TODO: Синхронизация должна вызываться из MainViewModel или откуда повыше
+        viewModelScope.launch {
+            syncPlaylists()
+        }
+    }
 }
