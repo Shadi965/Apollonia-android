@@ -17,7 +17,7 @@ data class AppTab(
     val icon: ImageVector,
     @StringRes val labelRes: Int,
     val graph: AppGraph,
-    val graphName: String? = graph::class.simpleName
+    val name: String? = graph::class.qualifiedName
 )
 
 val MainTabs = persistentListOf(
