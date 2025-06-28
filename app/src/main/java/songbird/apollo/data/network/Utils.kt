@@ -7,7 +7,7 @@ import songbird.apollo.data.BackendException
 import songbird.apollo.data.ParseBackendResponseException
 import java.net.SocketTimeoutException
 
-internal const val URL = "http://192.168.0.101"
+internal const val URL = "http://38.180.192.183"
 
 suspend fun <T> wrapRetrofitExceptions(block: suspend () -> T): T {
     return try {
