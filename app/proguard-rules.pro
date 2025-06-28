@@ -19,3 +19,8 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class songbird.apollo.presentation.ui.screens.AppGraph
+-keep class songbird.apollo.presentation.ui.screens.FavoriteGraph
+-keep class songbird.apollo.presentation.ui.screens.LibraryGraph
+-keep class songbird.apollo.presentation.ui.screens.SearchGraph
