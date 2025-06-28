@@ -70,7 +70,7 @@ fun NavApp() {
             AppScaffold { innerPadding ->
                 NavHost(
                     navController = navController,
-                    startDestination = SearchGraph,
+                    startDestination = FavoriteGraph,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding),
