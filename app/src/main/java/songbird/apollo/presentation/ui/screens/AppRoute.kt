@@ -38,6 +38,6 @@ data class SongMenuRoute(
 @Serializable
 data class PlayerScreenRoute(
     val songId: Int,
-)
+) : AppRoute
 
 
