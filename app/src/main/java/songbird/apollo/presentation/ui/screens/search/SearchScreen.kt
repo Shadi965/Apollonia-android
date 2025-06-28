@@ -13,6 +13,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,7 +75,8 @@ fun SearchScreen(modifier: Modifier = Modifier) {
             navController.navigate(
                 PlayerScreenRoute(songId)
             )
-        }
+        },
+        onLoadAllSongs = { viewModel.loadAllSongs() }
     )
 }
 
@@ -84,11 +87,13 @@ private fun SearchScreenContent(
     onSearch: (String) -> Unit = {},
     onSongMoreClick: (songId: Int) -> Unit = {},
     onSongClick: (songId: Int) -> Unit = {},
+    onLoadAllSongs: () -> Unit = {},
     searchQuery: String = ""
 ) {
 
     val focusManager = LocalFocusManager.current
     var songs by remember { mutableStateOf<List<SongPreviewUi>>(emptyList()) }
+    var loadAll by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -109,7 +114,22 @@ private fun SearchScreenContent(
                 onSearch = { focusManager.clearFocus() }
             ),
             trailingIcon = {
-                if (searchQuery.isNotEmpty()) {
+                // TODO: Для тестов
+                if (searchQuery.isEmpty()) {
+                    IconButton(onClick = {
+                        focusManager.clearFocus()
+                        if (!loadAll) {
+                            onLoadAllSongs()
+                            loadAll = true
+                    }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.RemoveRedEye,
+                            contentDescription = null
+                        )
+                    }
+                } else {
+                    loadAll = false
                     IconButton(onClick = { onSearch("") }) {
                         Icon(
                             imageVector = Icons.Default.Close,

@@ -3,6 +3,7 @@ package songbird.apollo.data.repository
 import songbird.apollo.data.local.dao.SongDao
 import songbird.apollo.data.network.URL
 import songbird.apollo.data.network.api.SongApi
+import songbird.apollo.data.network.dto.SongDto
 import songbird.apollo.data.network.wrapRetrofitExceptions
 import songbird.apollo.data.toSong
 import songbird.apollo.data.toSongPreview
@@ -19,7 +20,18 @@ class SongRepositoryImpl @Inject constructor(
 ) : SongRepository {
 
     override suspend fun getSongs(): List<SongPreview> = wrapRetrofitExceptions {
-        songApi.getSongs().data!!.map { it.toSongPreview() }
+        songApi.getSongs().data!!
+            // TODO: Это убрать
+            .groupBy { it.albumId }
+            .toList()
+            .sortedBy { (_, songs) -> songs.firstOrNull()?.artist ?: "" }
+            .flatMap { (_, songs) ->
+                songs.sortedWith(
+                    compareBy<SongDto> { it.disc }
+                        .thenBy { it.track }
+                )
+            }
+            .map { it.toSongPreview() }
     }
 
     override suspend fun searchSongs(query: String): List<SongPreview> = wrapRetrofitExceptions {

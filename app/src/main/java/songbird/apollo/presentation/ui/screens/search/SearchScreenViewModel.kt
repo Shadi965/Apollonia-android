@@ -12,19 +12,23 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import songbird.apollo.data.BackendException
 import songbird.apollo.data.ParseBackendResponseException
+import songbird.apollo.domain.usecase.GetAllSongsUseCase
 import songbird.apollo.domain.usecase.SearchSongsUseCase
 import songbird.apollo.presentation.model.SongPreviewUi
 import songbird.apollo.presentation.model.toUi
 import songbird.apollo.presentation.ui.LoadResult
 import songbird.apollo.presentation.ui.LoadResult.Empty
+import songbird.apollo.presentation.ui.LoadResult.Error
 import songbird.apollo.presentation.ui.LoadResult.Loading
+import songbird.apollo.presentation.ui.LoadResult.Success
 import java.net.ConnectException
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class SearchScreenViewModel @Inject constructor(
-    private val searchSongsUseCase: SearchSongsUseCase,
+    searchSongsUseCase: SearchSongsUseCase,
+    private val getAllSongs: GetAllSongsUseCase
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -52,15 +56,31 @@ class SearchScreenViewModel @Inject constructor(
                     try {
                         val songs = searchSongsUseCase(query)
                         _foundSongs.value = if (songs.isEmpty()) Empty
-                        else LoadResult.Success(songs.map { it.toUi() })
+                        else Success(songs.map { it.toUi() })
                     } catch (ex: ConnectException) {
-                        _foundSongs.value = LoadResult.Error(ex, "No internet connection")
+                        _foundSongs.value = Error(ex, "No internet connection")
                     } catch (ex: ParseBackendResponseException) {
-                        _foundSongs.value = LoadResult.Error(ex, "App version is outdated. Please update.")
+                        _foundSongs.value = Error(ex, "App version is outdated. Please update.")
                     } catch (ex: BackendException) {
-                        _foundSongs.value = LoadResult.Error(ex, "Server error.")
+                        _foundSongs.value = Error(ex, "Server error.")
                     }
                 }
+        }
+    }
+
+    // TODO: Временно для тестов
+    fun loadAllSongs() {
+        _foundSongs.value = Loading
+        viewModelScope.launch {
+            try {
+                _foundSongs.value = Success(getAllSongs().map { it.toUi() })
+            } catch (ex: ConnectException) {
+                _foundSongs.value = Error(ex, "No internet connection")
+            } catch (ex: ParseBackendResponseException) {
+                _foundSongs.value = Error(ex, "App version is outdated. Please update.")
+            } catch (ex: BackendException) {
+                _foundSongs.value = Error(ex, "Server error.")
+            }
         }
     }
 
