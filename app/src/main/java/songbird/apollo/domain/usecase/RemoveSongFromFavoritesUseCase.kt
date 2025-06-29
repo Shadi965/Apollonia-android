@@ -11,7 +11,7 @@ class RemoveSongFromFavoritesUseCase @Inject constructor(
     private val syncRepository: SyncRepository
 ) {
 
-    suspend operator fun invoke(id: Int) {
+    operator fun invoke(id: Int) {
         playlistRepository.removeFromFavorites(id)
         syncRepository.syncPlaylistSong(1, id)
     }

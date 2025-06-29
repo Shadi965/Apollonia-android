@@ -1,9 +1,11 @@
 package songbird.apollo.data.repository
 
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 import songbird.apollo.data.BackendException
+import songbird.apollo.data.ParseBackendResponseException
+import songbird.apollo.data.di.SingletonScope
 import songbird.apollo.data.local.SyncStatus
 import songbird.apollo.data.local.dao.AlbumDao
 import songbird.apollo.data.local.dao.PlaylistDao
@@ -22,6 +24,7 @@ import javax.inject.Singleton
 
 @Singleton
 class SyncRepositoryImpl @Inject constructor(
+    @SingletonScope private val singletonScope: CoroutineScope,
     private val songDao: SongDao,
     private val songApi: SongApi,
     private val albumDao: AlbumDao,
@@ -30,26 +33,36 @@ class SyncRepositoryImpl @Inject constructor(
     private val playlistApi: PlaylistApi
 ) : SyncRepository {
 
-    override suspend fun syncPlaylist(id: Int) {
-        val playlist = playlistDao.getPlaylist(id).first()
-        if (playlist != null)
-            syncPlaylist(playlist)
-        else
-            loadPlaylist(id)
-        loadPlaylistSongs(id)
+    override fun syncPlaylist(id: Int) {
+        singletonScope.launch {
+            val playlist = playlistDao.getPlaylist(id).first()
+            if (playlist != null)
+                syncPlaylist(playlist)
+            else
+                loadPlaylist(id)
+            loadPlaylistSongs(id)
+        }
     }
 
-
-    // TODO: Диспатчеры нужно указать везде
-    override suspend fun syncPlaylists() = withContext(Dispatchers.IO) {
-        playlistDao.getChangedPlaylists().forEach{ syncPlaylist(it) }
-        syncPlaylistSongs()
-        loadPlaylists()
+    override fun syncPlaylists() {
+        singletonScope.launch {
+            try {
+                playlistDao.getChangedPlaylists().forEach{ syncPlaylist(it) }
+                syncPlaylistSongs()
+                loadPlaylists()
+            } catch (_: BackendException) {
+                // TODO: Из-за отдельного диспатчера
+            } catch (_: ConnectException) {
+            } catch (_: ParseBackendResponseException) {
+            }
+        }
     }
 
-    override suspend fun syncPlaylistSong(playlistId: Int, songId: Int) {
-        val playlistSong = playlistDao.getPlaylistSong(playlistId, songId) ?: return
-        syncPlaylistSong(playlistSong)
+    override fun syncPlaylistSong(playlistId: Int, songId: Int) {
+        singletonScope.launch {
+            val playlistSong = playlistDao.getPlaylistSong(playlistId, songId) ?: return@launch
+            syncPlaylistSong(playlistSong)
+        }
     }
 
     private suspend fun syncPlaylistSongs() {

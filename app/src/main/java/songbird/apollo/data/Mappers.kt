@@ -86,6 +86,17 @@ fun AlbumDto.toEntity() = AlbumEntity(
     genre
 )
 
+fun AlbumDto.toAlbum() = Album(
+    id,
+    title,
+    artist,
+    trackCount,
+    discCount,
+    date,
+    copyright,
+    genre
+)
+
 fun AlbumEntity.toAlbum() = Album(
     id,
     title,

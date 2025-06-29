@@ -26,6 +26,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,47 +37,40 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
-import songbird.apollo.presentation.ui.LoadResult.Success
 import songbird.apollo.presentation.ui.screens.LocalNavController
 
 @Composable
 fun SongActions(
     songId: Int,
+    title: String,
+    artist: String,
+    albumId: Int,
+    coverUrl: String?,
     currentPlaylistId: Int? = null,
 ) {
     val viewModel = hiltViewModel<SongActionsViewModel, SongActionsViewModel.Factory> { factory ->
-        factory.create(songId, currentPlaylistId)
+        factory.create(
+            songId = songId,
+            title = title,
+            artist = artist,
+            albumId = albumId,
+            coverUrl = coverUrl,
+            currentPlaylistId = currentPlaylistId
+        )
     }
     val navController = LocalNavController.current
 
-    val state = viewModel.song.collectAsState()
-
-    when (val songResult = state.value.song) {
-        is Success -> {
-            SongActionsSheet(
-                songTitle = songResult.data.title,
-                songArtist = songResult.data.artist,
-                albumName = state.value.albumName,
-                coverUrl = songResult.data.coverUrl,
-                isFavorite = state.value.isFavorite,
-                onDismiss = { navController.popBackStack() },
-                toFavorite = if (state.value.isFavorite) {
-                    { viewModel.removeFromFavorites() }
-                } else {
-                    { viewModel.addToFavorites() }
-                }
-            )
-        }
-        else -> {
-            SongActionsSheet(
-                songTitle = "",
-                songArtist = "",
-                albumName = "",
-                coverUrl = null,
-                onDismiss = { navController.popBackStack() }
-            )
-        }
-    }
+    val state by viewModel.state.collectAsState()
+    // TODO: Ошибки не обрабатываются
+    SongActionsSheet(
+        songTitle = state.title,
+        songArtist = state.artist,
+        albumName = state.albumName,
+        coverUrl = state.coverUrl,
+        isFavorite = state.isFavorite,
+        onDismiss = { navController.popBackStack() },
+        toFavorite = { viewModel.toggleFavorite() }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

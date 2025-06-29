@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import songbird.apollo.data.BackendException
 import songbird.apollo.data.ParseBackendResponseException
 import songbird.apollo.domain.usecase.GetFavoritesUseCase
@@ -47,8 +46,6 @@ class FavoritesScreenViewModel @Inject constructor(
 
     init {
         // TODO: Синхронизация должна вызываться из MainViewModel или откуда повыше
-        viewModelScope.launch {
-            syncPlaylists()
-        }
+        syncPlaylists()
     }
 }

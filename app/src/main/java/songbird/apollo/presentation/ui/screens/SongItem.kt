@@ -32,7 +32,7 @@ import songbird.apollo.presentation.ui.theme.ApolloniaTheme
 fun SongItem(
     song: SongPreviewUi,
     modifier: Modifier = Modifier,
-    onMoreClick: (songId: Int) -> Unit = {},
+    onMoreClick: (song: SongPreviewUi) -> Unit = {},
     onClick: (songId: Int) -> Unit = {},
 ) {
     Row(
@@ -87,7 +87,7 @@ fun SongItem(
             Spacer(modifier = Modifier.width(20.dp))
         }
 
-        IconButton(onClick = { onMoreClick(song.id) }) {
+        IconButton(onClick = { onMoreClick(song) }) {
             Icon(
                 imageVector = Icons.Default.MoreVert,
                 contentDescription = "More options"

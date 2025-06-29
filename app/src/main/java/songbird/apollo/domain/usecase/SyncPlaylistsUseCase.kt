@@ -9,7 +9,7 @@ class SyncPlaylistsUseCase @Inject constructor(
     private val syncRepository: SyncRepository
 ) {
 
-    suspend operator fun invoke() {
+    operator fun invoke() {
         syncRepository.syncPlaylists()
     }
 

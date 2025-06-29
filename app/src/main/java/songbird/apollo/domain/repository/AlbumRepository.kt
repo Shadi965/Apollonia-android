@@ -1,9 +1,12 @@
 package songbird.apollo.domain.repository
 
-import kotlinx.coroutines.flow.Flow
 import songbird.apollo.domain.model.Album
 
 interface AlbumRepository {
 
-    fun getAlbum(id: Int): Flow<Album?>
+    suspend fun getAlbum(id: Int): Album?
+
+    suspend fun fetchAlbum(id: Int): Album
+
+    suspend fun isAlbumLocal(id: Int): Boolean
 }

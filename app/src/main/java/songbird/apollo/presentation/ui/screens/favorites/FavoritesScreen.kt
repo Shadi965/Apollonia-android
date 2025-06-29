@@ -67,6 +67,10 @@ private fun FavoritesScreenContent(
                                 // TODO: Favorites - playlist 1
                                 SongMenuRoute(
                                     songId = song.id,
+                                    title = song.title,
+                                    artist = song.artist,
+                                    albumId = song.albumId,
+                                    coverUrl = song.coverUrl,
                                     currentPlaylistId = 1
                                 )
                             )

@@ -1,5 +1,7 @@
 package songbird.apollo.data.repository
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import songbird.apollo.data.local.dao.SongDao
 import songbird.apollo.data.network.URL
 import songbird.apollo.data.network.api.SongApi
@@ -19,36 +21,42 @@ class SongRepositoryImpl @Inject constructor(
     private val songDao: SongDao
 ) : SongRepository {
 
-    override suspend fun getSongs(): List<SongPreview> = wrapRetrofitExceptions {
-        songApi.getSongs().data!!
-            // TODO: Это убрать
-            .groupBy { it.albumId }
-            .toList()
-            .sortedBy { (_, songs) -> songs.firstOrNull()?.artist ?: "" }
-            .flatMap { (_, songs) ->
-                songs.sortedWith(
-                    compareBy<SongDto> { it.disc }
-                        .thenBy { it.track }
-                )
-            }
-            .map { it.toSongPreview() }
+    override suspend fun getSongs(): List<SongPreview> = withContext(Dispatchers.IO) {
+        return@withContext wrapRetrofitExceptions {
+            songApi.getSongs().data!!
+                // TODO: Это убрать
+                .groupBy { it.albumId }
+                .toList()
+                .sortedBy { (_, songs) -> songs.firstOrNull()?.artist ?: "" }
+                .flatMap { (_, songs) ->
+                    songs.sortedWith(
+                        compareBy<SongDto> { it.disc }
+                            .thenBy { it.track }
+                    )
+                }
+                .map { it.toSongPreview() }
+        }
     }
 
-    override suspend fun searchSongs(query: String): List<SongPreview> = wrapRetrofitExceptions {
-        songApi.searchSongs(query).data!!.map { it.toSongPreview() }
+    override suspend fun searchSongs(query: String): List<SongPreview> = withContext(Dispatchers.IO) {
+        return@withContext wrapRetrofitExceptions {
+            songApi.searchSongs(query).data!!.map { it.toSongPreview() }
+        }
     }
 
-    override suspend fun isSongLocal(id: Int): Boolean {
-        return songDao.isSongExists(id)
+    override suspend fun isSongLocal(id: Int): Boolean = withContext(Dispatchers.IO) {
+        return@withContext songDao.isSongExists(id)
     }
 
-    override suspend fun getSong(id: Int): Song {
+    override suspend fun getSong(id: Int): Song = withContext(Dispatchers.IO) {
         // TODO: Nullable
-        return songDao.getSong(id)!!.toSong()
+        return@withContext songDao.getSong(id)!!.toSong()
     }
 
-    override suspend fun fetchSong(id: Int): Song = wrapRetrofitExceptions {
-        songApi.getSong(id).data!!.toSong()
+    override suspend fun fetchSong(id: Int): Song = withContext(Dispatchers.IO) {
+        return@withContext wrapRetrofitExceptions {
+            songApi.getSong(id).data!!.toSong()
+        }
     }
 
     override fun getSongStreamUrl(songId: Int): String {

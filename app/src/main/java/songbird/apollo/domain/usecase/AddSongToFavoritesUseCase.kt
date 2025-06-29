@@ -11,7 +11,7 @@ class AddSongToFavoritesUseCase @Inject constructor(
     private val syncRepository: SyncRepository
 ) {
 
-    suspend operator fun invoke(id: Int) {
+    operator fun invoke(id: Int) {
         playlistRepository.addToFavorites(id)
         syncRepository.syncPlaylistSong(1, id)
     }

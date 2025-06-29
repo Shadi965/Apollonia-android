@@ -7,9 +7,9 @@ interface PlaylistRepository {
 
     fun getFavorites(): Flow<List<SongPreview>>
 
-    suspend fun addToFavorites(songId: Int)
+    fun addToFavorites(songId: Int)
 
-    suspend fun removeFromFavorites(songId: Int)
+    fun removeFromFavorites(songId: Int)
 
     suspend fun getSongPlaylists(songId: Int): List<Int>
 

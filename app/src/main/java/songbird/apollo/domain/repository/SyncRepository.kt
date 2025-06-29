@@ -2,9 +2,9 @@ package songbird.apollo.domain.repository
 
 interface SyncRepository {
 
-    suspend fun syncPlaylist(id: Int)
+    fun syncPlaylist(id: Int)
 
-    suspend fun syncPlaylists()
+    fun syncPlaylists()
 
-    suspend fun syncPlaylistSong(playlistId: Int, songId: Int)
+    fun syncPlaylistSong(playlistId: Int, songId: Int)
 }

@@ -15,7 +15,7 @@ interface AlbumDao {
     fun getAlbums(): Flow<List<AlbumPreviewTuple>>
 
     @Query("SELECT * FROM albums WHERE id = :id")
-    fun getAlbum(id: Int): Flow<AlbumEntity?>
+    fun getAlbum(id: Int): AlbumEntity?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(albums: List<AlbumEntity>)
