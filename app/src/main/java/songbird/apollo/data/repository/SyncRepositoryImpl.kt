@@ -15,6 +15,8 @@ import songbird.apollo.data.local.entity.PlaylistSongsEntity
 import songbird.apollo.data.network.api.AlbumApi
 import songbird.apollo.data.network.api.PlaylistApi
 import songbird.apollo.data.network.api.SongApi
+import songbird.apollo.data.network.requests.AlbumsIdsRequest
+import songbird.apollo.data.network.requests.SongsIdsRequest
 import songbird.apollo.data.network.wrapRetrofitExceptions
 import songbird.apollo.data.toEntity
 import songbird.apollo.domain.repository.SyncRepository
@@ -153,17 +155,22 @@ class SyncRepositoryImpl @Inject constructor(
         val remoteSongs = playlistApi.getSongs(playlistId).data!!
         val localSongs = playlistDao.getPlaylistSongs(playlistId).map { it.songId }.toSet()
         val newSongs = remoteSongs.filter { it.songId !in localSongs }
-        newSongs.forEach {
-            if (!songDao.isSongExists(it.songId)) {
-                val song = songApi.getSong(it.songId).data!!
-                if (!albumDao.isAlbumExists(song.albumId)) {
-                    val album = albumApi.getAlbum(song.albumId).data!!
-                    albumDao.insert(album.toEntity())
-                }
-                songDao.insert(song.toEntity())
+        val songs = newSongs.filter { !songDao.isSongExists(it.songId) }
+            .run {
+                songApi.getSongs(SongsIdsRequest(this.map { it.songId })).data!!
+                    .map { it.toEntity() }
             }
-            playlistDao.insertSong(PlaylistSongsEntity(playlistId, it.songId, it.position, SyncStatus.SYNCED))
-        }
+
+        val albums = songs.map { it.albumId }
+            .toSet()
+            .filter { !albumDao.isAlbumExists(it) }
+            .run {
+                albumApi.getAlbums(AlbumsIdsRequest(this.toList())).data!!
+                    .map { it.toEntity() }
+            }
+        albumDao.insert(albums)
+        songDao.insert(songs)
+        playlistDao.insertSongs(newSongs.map { PlaylistSongsEntity(playlistId, it.songId, it.position, SyncStatus.SYNCED) })
     }
 
 }
