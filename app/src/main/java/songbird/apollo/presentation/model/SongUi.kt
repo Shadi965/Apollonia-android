@@ -1,8 +1,10 @@
 package songbird.apollo.presentation.model
 
+import androidx.compose.runtime.Stable
 import songbird.apollo.domain.model.Song
 import songbird.apollo.domain.model.SongPreview
 
+@Stable
 data class SongUi(
     val id: Int,
 
@@ -24,6 +26,7 @@ data class SongUi(
     val isDownloaded: Boolean,
 )
 
+@Stable
 data class SongPreviewUi(
     val id: Int,
     val title: String,

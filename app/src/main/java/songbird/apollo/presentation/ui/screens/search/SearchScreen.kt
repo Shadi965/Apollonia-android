@@ -65,15 +65,7 @@ fun SearchScreen(modifier: Modifier = Modifier) {
         searchQuery = searchQuery,
         onSearch = { viewModel.onSearchQueryChange(it) },
         onSongMoreClick = { song ->
-            navController.navigate(
-                SongMenuRoute(
-                    songId = song.id,
-                    title = song.title,
-                    artist = song.artist,
-                    albumId = song.albumId,
-                    coverUrl = song.coverUrl
-                )
-            )
+            navController.navigate(SongMenuRoute(song))
         },
         onSongClick = { songId ->
             navController.navigate(
@@ -90,7 +82,7 @@ private fun SearchScreenContent(
     songsState: LoadResult<List<SongPreviewUi>> = Empty,
     onSearch: (String) -> Unit = {},
     onSongMoreClick: (song: SongPreviewUi) -> Unit = {},
-    onSongClick: (songId: Int) -> Unit = {},
+    onSongClick: (song: SongPreviewUi) -> Unit = {},
     onLoadAllSongs: () -> Unit = {},
     searchQuery: String = ""
 ) {

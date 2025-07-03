@@ -37,26 +37,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
+import songbird.apollo.presentation.model.SongPreviewUi
 import songbird.apollo.presentation.ui.screens.LocalNavController
 
 @Composable
 fun SongActions(
-    songId: Int,
-    title: String,
-    artist: String,
-    albumId: Int,
-    coverUrl: String?,
-    currentPlaylistId: Int? = null,
+    song: SongPreviewUi
 ) {
     val viewModel = hiltViewModel<SongActionsViewModel, SongActionsViewModel.Factory> { factory ->
-        factory.create(
-            songId = songId,
-            title = title,
-            artist = artist,
-            albumId = albumId,
-            coverUrl = coverUrl,
-            currentPlaylistId = currentPlaylistId
-        )
+        factory.create(song)
     }
     val navController = LocalNavController.current
 
@@ -69,7 +58,8 @@ fun SongActions(
         coverUrl = state.coverUrl,
         isFavorite = state.isFavorite,
         onDismiss = { navController.popBackStack() },
-        toFavorite = { viewModel.toggleFavorite() }
+        toFavorite = { viewModel.toggleFavorite() },
+        onPlay = { /* TODO: передать на воспроизведение */ }
     )
 }
 

@@ -95,12 +95,7 @@ fun NavApp() {
                     bottomSheet<SongMenuRoute> { backStackEntry ->
                         val route: SongMenuRoute = backStackEntry.toRoute()
                         SongActions(
-                            songId = route.songId,
-                            title = route.title,
-                            artist = route.artist,
-                            albumId = route.albumId,
-                            coverUrl = route.coverUrl,
-                            currentPlaylistId = route.currentPlaylistId,
+                            song = route.song
                         )
                     }
 

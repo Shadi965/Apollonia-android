@@ -1,6 +1,7 @@
 package songbird.apollo.presentation.ui.screens
 
 import kotlinx.serialization.Serializable
+import songbird.apollo.presentation.model.SongPreviewUi
 
 @Serializable
 sealed interface AppRoute
@@ -30,16 +31,35 @@ data object SearchGraph : AppGraph {
 data object SettingsScreenRoute : AppRoute
 
 @Serializable
-data class SongMenuRoute(
-    val songId: Int,
-    val title: String,
-    val artist: String,
-    val albumId: Int,
-    val coverUrl: String?,
-    val currentPlaylistId: Int? = null,
-) : AppRoute
+data class SongMenuRoute private constructor(
+    private val songId: Int,
+    private val title: String,
+    private val artist: String,
+    private val albumId: Int,
+    private val position: Double,
+    private val coverUrl: String?,
+    private val isDownloaded: Boolean,
+) : AppRoute {
+    constructor(song: SongPreviewUi) : this(
+        songId = song.id,
+        title = song.title,
+        artist = song.artist,
+        albumId = song.albumId,
+        position = song.position,
+        coverUrl = song.coverUrl,
+        isDownloaded = song.isDownloaded
+    )
 
-@Serializable
-data class PlayerScreenRoute(
-    val songId: Int,
-) : AppRoute
+    val song: SongPreviewUi
+        get() {
+            return SongPreviewUi(
+                id = songId,
+                title = title,
+                artist = artist,
+                albumId = albumId,
+                position = position,
+                coverUrl = coverUrl,
+                isDownloaded = isDownloaded
+            )
+        }
+}
