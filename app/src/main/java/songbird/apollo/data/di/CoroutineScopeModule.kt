@@ -9,9 +9,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import javax.inject.Qualifier
 import javax.inject.Singleton
+import kotlin.annotation.AnnotationRetention.BINARY
 
 @Qualifier
-@Retention(AnnotationRetention.BINARY)
+@Retention(BINARY)
 annotation class SingletonScope
 
 @Module

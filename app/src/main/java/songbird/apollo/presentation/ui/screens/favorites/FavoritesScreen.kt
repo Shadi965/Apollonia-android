@@ -3,7 +3,7 @@ package songbird.apollo.presentation.ui.screens.favorites
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -18,9 +18,9 @@ import songbird.apollo.presentation.ui.LoadResult.Error
 import songbird.apollo.presentation.ui.LoadResult.Loading
 import songbird.apollo.presentation.ui.LoadResult.Success
 import songbird.apollo.presentation.ui.screens.LocalNavController
-import songbird.apollo.presentation.ui.screens.PlayerScreenRoute
 import songbird.apollo.presentation.ui.screens.SongItem
 import songbird.apollo.presentation.ui.screens.SongMenuRoute
+import songbird.apollo.presentation.ui.screens.player.LocalPlayerEntryViewModel
 import songbird.apollo.presentation.ui.screens.scaffold.ModifyScaffoldUi
 
 @Composable
@@ -44,6 +44,7 @@ private fun FavoritesScreenContent(
     favorites: LoadResult<List<SongPreviewUi>>
 ) {
     val navController = LocalNavController.current
+    val playerState = LocalPlayerEntryViewModel.current
     when (favorites) {
 
         is Empty -> {
@@ -59,14 +60,14 @@ private fun FavoritesScreenContent(
 
         is Success -> {
             LazyColumn(modifier = modifier.fillMaxSize()) {
-                items(favorites.data) { song ->
+                itemsIndexed(favorites.data) { index, song ->
                     SongItem(
                         song = song,
                         onMoreClick = {
                             // TODO: Favorites - playlist 1
                             navController.navigate(SongMenuRoute(song))
                         },
-                        onClick = { navController.navigate(PlayerScreenRoute(song.id)) }
+                        onClick = { playerState.playerRegister(favorites.data, index) }
                     )
                 }
             }
@@ -82,7 +83,7 @@ private fun FavoritesScreenContent(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = favorites.message?: "Unknown error",
+                    text = favorites.message ?: "Unknown error",
                 )
             }
         }

@@ -46,7 +46,8 @@ data class SongPreviewTuple(
     val title: String,
     val artist: String,
     @ColumnInfo(name = "album_id")
-    val albumId: Int
+    val albumId: Int,
+    val duration: Int
 )
 
 data class PositionedSong(

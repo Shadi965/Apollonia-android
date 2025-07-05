@@ -33,12 +33,12 @@ fun SongItem(
     song: SongPreviewUi,
     modifier: Modifier = Modifier,
     onMoreClick: (song: SongPreviewUi) -> Unit = {},
-    onClick: (songId: Int) -> Unit = {},
+    onClick: (songs: SongPreviewUi) -> Unit = {},
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick(song.id) }
+            .clickable { onClick(song) }
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -106,6 +106,7 @@ fun SongPreview() {
                 title = "Florida Kilos",
                 artist = "Lana Del Rey ",
                 albumId = 1,
+                duration = 0,
                 position = 0.0,
                 coverUrl = null,
                 isDownloaded = false

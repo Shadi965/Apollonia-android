@@ -24,6 +24,8 @@ data class SongPreview(
     val title: String,
     val artist: String,
     val albumId: Int,
+    val duration: Int,
+
     val position: Double,
     val coverUrl: String?,
 )

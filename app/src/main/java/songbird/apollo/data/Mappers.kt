@@ -7,9 +7,11 @@ import songbird.apollo.data.local.entity.PositionedSong
 import songbird.apollo.data.local.entity.SongEntity
 import songbird.apollo.data.network.URL
 import songbird.apollo.data.network.dto.AlbumDto
+import songbird.apollo.data.network.dto.LyricsDto
 import songbird.apollo.data.network.dto.PlaylistDto
 import songbird.apollo.data.network.dto.SongDto
 import songbird.apollo.domain.model.Album
+import songbird.apollo.domain.model.LyricLine
 import songbird.apollo.domain.model.Song
 import songbird.apollo.domain.model.SongPreview
 
@@ -47,6 +49,7 @@ fun SongDto.toSongPreview() = SongPreview(
     title,
     artist,
     albumId,
+    duration,
     position = 0.0,
     coverUrl = "$URL/album/cover/${albumId}"
 )
@@ -71,6 +74,7 @@ fun PositionedSong.toSongPreview() = SongPreview(
     song.title,
     song.artist,
     song.albumId,
+    song.duration,
     position,
     coverUrl = "$URL/album/cover/${song.albumId}"
 )
@@ -113,3 +117,7 @@ fun PlaylistDto.toEntity(syncStatus: SyncStatus) = PlaylistEntity(
     name,
     syncStatus = syncStatus
 )
+
+fun LyricsDto.toLyricLineList(): List<LyricLine> = this.lyrics.map {
+    LyricLine(it.text, it.time)
+}

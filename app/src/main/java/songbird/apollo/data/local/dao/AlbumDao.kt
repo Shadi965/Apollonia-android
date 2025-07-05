@@ -26,7 +26,7 @@ interface AlbumDao {
     @Query("DELETE FROM albums WHERE id = :id")
     suspend fun delete(id: Int)
 
-    @Query("SELECT id, title, artist, album_id FROM songs WHERE album_id = :albumId")
+    @Query("SELECT id, title, artist, album_id, duration FROM songs WHERE album_id = :albumId")
     fun getSongsFromAlbum(albumId: Int): Flow<List<SongPreviewTuple>>
 
     @Query("SELECT EXISTS(SELECT 1 FROM albums WHERE id = :id)")

@@ -17,6 +17,7 @@ import androidx.compose.material.navigation.rememberBottomSheetNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
@@ -28,7 +29,6 @@ import songbird.apollo.presentation.ui.screens.FavoriteGraph.FavoriteScreenRoute
 import songbird.apollo.presentation.ui.screens.LibraryGraph
 import songbird.apollo.presentation.ui.screens.LibraryGraph.LibraryScreenRoute
 import songbird.apollo.presentation.ui.screens.LocalNavController
-import songbird.apollo.presentation.ui.screens.PlayerScreenRoute
 import songbird.apollo.presentation.ui.screens.SearchGraph
 import songbird.apollo.presentation.ui.screens.SearchGraph.SearchScreenRoute
 import songbird.apollo.presentation.ui.screens.SettingsScreenRoute
@@ -36,7 +36,8 @@ import songbird.apollo.presentation.ui.screens.SongMenuRoute
 import songbird.apollo.presentation.ui.screens.favorites.FavoritesScreen
 import songbird.apollo.presentation.ui.screens.library.LibraryScreen
 import songbird.apollo.presentation.ui.screens.menu.SongActions
-import songbird.apollo.presentation.ui.screens.player.PlayerScreen
+import songbird.apollo.presentation.ui.screens.player.LocalPlayerEntryViewModel
+import songbird.apollo.presentation.ui.screens.player.PlayerEntryViewModel
 import songbird.apollo.presentation.ui.screens.scaffold.AppScaffold
 import songbird.apollo.presentation.ui.screens.search.SearchScreen
 import songbird.apollo.presentation.ui.screens.settings.SettingsScreen
@@ -60,13 +61,14 @@ fun NavApp() {
     val sheetNavigator = rememberBottomSheetNavigator()
     val navController = rememberNavController(sheetNavigator)
 
+    val playerEntryViewModel: PlayerEntryViewModel = hiltViewModel()
+
     CompositionLocalProvider(
         LocalNavController provides navController,
+        LocalPlayerEntryViewModel provides playerEntryViewModel
 
-        ) {
-        ModalBottomSheetLayout(
-            bottomSheetNavigator = sheetNavigator
-        ) {
+    ) {
+        ModalBottomSheetLayout(sheetNavigator) {
             AppScaffold { innerPadding ->
                 NavHost(
                     navController = navController,
@@ -99,10 +101,6 @@ fun NavApp() {
                         )
                     }
 
-                    composable<PlayerScreenRoute> { backStackEntry ->
-                        val route: PlayerScreenRoute = backStackEntry.toRoute()
-                        PlayerScreen(route.songId)
-                    }
                 }
             }
         }

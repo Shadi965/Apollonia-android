@@ -11,7 +11,7 @@ import songbird.apollo.data.local.entity.SongPreviewTuple
 @Dao
 interface SongDao {
 
-    @Query("SELECT id, title, artist, album_id FROM songs")
+    @Query("SELECT id, title, artist, album_id, duration FROM songs")
     fun getSongs(): Flow<List<SongPreviewTuple>>
 
     @Query("SELECT * FROM songs WHERE id = :id")

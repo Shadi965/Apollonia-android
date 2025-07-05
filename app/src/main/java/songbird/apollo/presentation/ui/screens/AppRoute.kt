@@ -36,6 +36,7 @@ data class SongMenuRoute private constructor(
     private val title: String,
     private val artist: String,
     private val albumId: Int,
+    private val duration: Int,
     private val position: Double,
     private val coverUrl: String?,
     private val isDownloaded: Boolean,
@@ -45,6 +46,7 @@ data class SongMenuRoute private constructor(
         title = song.title,
         artist = song.artist,
         albumId = song.albumId,
+        duration = song.duration,
         position = song.position,
         coverUrl = song.coverUrl,
         isDownloaded = song.isDownloaded
@@ -57,6 +59,7 @@ data class SongMenuRoute private constructor(
                 title = title,
                 artist = artist,
                 albumId = albumId,
+                duration = duration,
                 position = position,
                 coverUrl = coverUrl,
                 isDownloaded = isDownloaded

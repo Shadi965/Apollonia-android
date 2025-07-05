@@ -38,7 +38,7 @@ interface PlaylistDao {
     suspend fun delete(playlist: PlaylistEntity)
 
     @Query("""
-        SELECT s.id, s.title, s.artist, s.album_id, ps.position
+        SELECT s.id, s.title, s.artist, s.album_id, s.duration, ps.position
         FROM songs s
         INNER JOIN playlist_songs ps
         ON s.id = ps.song_id

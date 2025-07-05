@@ -42,9 +42,9 @@ import songbird.apollo.presentation.ui.LoadResult.Error
 import songbird.apollo.presentation.ui.LoadResult.Loading
 import songbird.apollo.presentation.ui.LoadResult.Success
 import songbird.apollo.presentation.ui.screens.LocalNavController
-import songbird.apollo.presentation.ui.screens.PlayerScreenRoute
 import songbird.apollo.presentation.ui.screens.SongItem
 import songbird.apollo.presentation.ui.screens.SongMenuRoute
+import songbird.apollo.presentation.ui.screens.player.LocalPlayerEntryViewModel
 import songbird.apollo.presentation.ui.screens.scaffold.ModifyScaffoldUi
 
 @Composable
@@ -55,6 +55,7 @@ fun SearchScreen(modifier: Modifier = Modifier) {
 
     val navController = LocalNavController.current
     val viewModel: SearchScreenViewModel = hiltViewModel()
+    val playerState = LocalPlayerEntryViewModel.current
 
     val songsState by viewModel.foundSongs.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
@@ -67,10 +68,8 @@ fun SearchScreen(modifier: Modifier = Modifier) {
         onSongMoreClick = { song ->
             navController.navigate(SongMenuRoute(song))
         },
-        onSongClick = { songId ->
-            navController.navigate(
-                PlayerScreenRoute(songId)
-            )
+        onSongClick = { song ->
+            playerState.playerRegister(listOf(song), 0)
         },
         onLoadAllSongs = { viewModel.loadAllSongs() }
     )
@@ -202,6 +201,7 @@ private fun SearchScreenPreview() {
                 title = "Song $i",
                 artist = "Artist $i",
                 albumId = i,
+                duration = 0,
                 coverUrl = null,
                 position = 0.0,
                 isDownloaded = i % 2 == 0

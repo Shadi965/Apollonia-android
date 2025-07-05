@@ -32,6 +32,8 @@ data class SongPreviewUi(
     val title: String,
     val artist: String,
     val albumId: Int,
+    val duration: Int,
+
     val position: Double,
     val coverUrl: String?,
     val isDownloaded: Boolean,
@@ -58,6 +60,7 @@ fun SongPreview.toUi() = SongPreviewUi(
     title = title,
     artist = artist,
     albumId = albumId,
+    duration = duration,
     position = position,
     coverUrl = coverUrl,
     isDownloaded = false

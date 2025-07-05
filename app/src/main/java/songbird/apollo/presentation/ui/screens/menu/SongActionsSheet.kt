@@ -39,6 +39,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import songbird.apollo.presentation.model.SongPreviewUi
 import songbird.apollo.presentation.ui.screens.LocalNavController
+import songbird.apollo.presentation.ui.screens.player.LocalPlayerEntryViewModel
 
 @Composable
 fun SongActions(
@@ -48,6 +49,7 @@ fun SongActions(
         factory.create(song)
     }
     val navController = LocalNavController.current
+    val playerState = LocalPlayerEntryViewModel.current
 
     val state by viewModel.state.collectAsState()
     // TODO: Ошибки не обрабатываются
@@ -59,7 +61,7 @@ fun SongActions(
         isFavorite = state.isFavorite,
         onDismiss = { navController.popBackStack() },
         toFavorite = { viewModel.toggleFavorite() },
-        onPlay = { /* TODO: передать на воспроизведение */ }
+        onPlay = { playerState.playerRegister(listOf(song), 0) }
     )
 }
 
@@ -96,7 +98,10 @@ private fun SongActionsSheet(
                 modifier = Modifier
                     .size(72.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .clickable { onPlay() }
+                    .clickable {
+                        onPlay()
+                        onDismiss()
+                    }
             ) {
                 AsyncImage(
                     model = coverUrl,
@@ -145,7 +150,10 @@ private fun SongActionsSheet(
         SongMenuItem(
             icon = if (isFavorite) Icons.Default.HeartBroken else Icons.Default.Favorite,
             text = if (isFavorite) "Remove from favorites" else "Add to favorites",
-            onClick = toFavorite
+            onClick = {
+                toFavorite()
+                onDismiss()
+            }
         )
         SongMenuItem(
             icon = Icons.Default.Add,
@@ -156,7 +164,10 @@ private fun SongActionsSheet(
         SongMenuItem(
             icon = Icons.Default.Download,
             text = "Download",
-            onClick = onDownload,
+            onClick = {
+                onDownload()
+                onDismiss()
+            },
             enabled = false
         )
     }

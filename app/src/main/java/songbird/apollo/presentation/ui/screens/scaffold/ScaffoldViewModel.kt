@@ -31,8 +31,8 @@ data class ScaffoldUiState(
     @StringRes val topBarTitle: Int = android.R.string.untitled
 )
 
-val LocalScaffoldViewModel = staticCompositionLocalOf<ScaffoldViewModel?> {
-    null
+val LocalScaffoldViewModel = staticCompositionLocalOf<ScaffoldViewModel> {
+    error("No ScaffoldViewModel provided")
 }
 
 @Composable
@@ -49,7 +49,7 @@ fun ModifyScaffoldUi(
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_START) {
-                viewModel?.updateUiState(
+                viewModel.updateUiState(
                     ScaffoldUiState(
                         showTopBar = showTopBar,
                         showBottomBar = showBottomBar,

@@ -7,8 +7,10 @@ import songbird.apollo.data.network.URL
 import songbird.apollo.data.network.api.SongApi
 import songbird.apollo.data.network.dto.SongDto
 import songbird.apollo.data.network.wrapRetrofitExceptions
+import songbird.apollo.data.toLyricLineList
 import songbird.apollo.data.toSong
 import songbird.apollo.data.toSongPreview
+import songbird.apollo.domain.model.LyricLine
 import songbird.apollo.domain.model.Song
 import songbird.apollo.domain.model.SongPreview
 import songbird.apollo.domain.repository.SongRepository
@@ -63,5 +65,10 @@ class SongRepositoryImpl @Inject constructor(
         return "$URL/stream/$songId"
     }
 
+    override suspend fun getLyrics(songId: Int): List<LyricLine> = withContext(Dispatchers.IO) {
+        return@withContext wrapRetrofitExceptions {
+            songApi.getSongLyrics(songId).data!!.toLyricLineList()
+        }
+    }
 
 }
