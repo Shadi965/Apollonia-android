@@ -4,7 +4,8 @@
 Основные функции (поиск, избранное, воспроизведение и караоке) реализованы в базовом виде, но нуждаются в доработке.  
 Остальные экраны и логика пока в разработке. Возможны баги и недоработки.
 
-[**Скачать APK (debug-подпись)**](https://1drv.ms/f/c/cb39eb4508959bd7/EnTsNC0yxLFFvRrcMkEe0KwBUq6O9AkHZXh3qmaqxb1Djg)
+- Скачать APK (debug-подпись) [**со страницы последнего релиза**](https://github.com/Shadi965/Apollonia-android/releases/latest)
+- Или с [**OneDrive**](https://1drv.ms/f/c/cb39eb4508959bd7/EnTsNC0yxLFFvRrcMkEe0KwBUq6O9AkHZXh3qmaqxb1Djg)
 
 ---
 
