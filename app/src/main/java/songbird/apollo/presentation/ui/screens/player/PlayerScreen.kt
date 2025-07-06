@@ -225,9 +225,6 @@ private fun PlaylistItem(
                 MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
             else
                 Color.Transparent
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isCurrentSong) 2.dp else 0.dp
         )
     ) {
         Row(
