@@ -64,10 +64,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
@@ -75,6 +77,7 @@ import kotlinx.coroutines.delay
 import songbird.apollo.presentation.model.SongPreviewUi
 import songbird.apollo.presentation.ui.screens.LocalNavController
 import songbird.apollo.presentation.ui.screens.SongMenuRoute
+import songbird.apollo.presentation.ui.theme.ApolloniaTheme
 import java.util.Locale
 
 fun formatMillis(ms: Long): String {
@@ -112,8 +115,12 @@ private fun PlaylistPanel(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.3f))
-                    .clickable { onClose() }
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) {
+                        onClose()
+                    }
             )
 
             Card(
@@ -209,6 +216,18 @@ private fun PlaylistPanel(
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun PlaylistPanelPreview() {
+    ApolloniaTheme(false) {
+        PlaylistItem(
+            song = SongPreviewUi(0, "Song", "Artist", 0, 0, 0.0, null, false),
+            isCurrentSong = true,
+            onClick = {}
+        )
+    }
+}
+
 @Composable
 private fun PlaylistItem(
     song: SongPreviewUi,
@@ -233,32 +252,16 @@ private fun PlaylistItem(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
+            Spacer(modifier = Modifier.width(16.dp))
+
+            AsyncImage(
+                model = song.coverUrl,
+                contentDescription = "Album cover",
                 modifier = Modifier
-                    .size(4.dp)
-                    .background(
-                        if (isCurrentSong) MaterialTheme.colorScheme.primary
-                        else Color.Transparent,
-                        CircleShape
-                    )
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
             )
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Card(
-                modifier = Modifier.size(48.dp),
-                shape = RoundedCornerShape(6.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
-            ) {
-                AsyncImage(
-                    model = song.coverUrl,
-                    contentDescription = "Album cover",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-            }
 
             Spacer(modifier = Modifier.width(12.dp))
 
@@ -284,15 +287,6 @@ private fun PlaylistItem(
                         MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
-                )
-            }
-
-            if (isCurrentSong) {
-                Icon(
-                    Icons.Default.PlayArrow,
-                    contentDescription = "Currently playing",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(20.dp)
                 )
             }
         }
