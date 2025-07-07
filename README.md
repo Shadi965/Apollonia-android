@@ -9,6 +9,24 @@
 
 ---
 
+## 📸 Скриншоты
+
+<table>
+  <tr>
+    <td align="center"><img src="misc/images/favorite.jpg" width="150"/><br/>Избранное</td>
+    <td align="center"><img src="misc/images/search.jpg" width="150"/><br/>Поиск</td>
+    <td align="center"><img src="misc/images/song_actions.jpg" width="150"/><br/>Меню песни</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="misc/images/mini_player.jpg" width="150"/><br/>Свёрнутый плеер</td>
+    <td align="center"><img src="misc/images/fullscreen_player.jpg" width="150"/><br/>Развёрнутый плеер</td>
+    <td align="center"><img src="misc/images/lyrics.jpg" width="150"/><br/>Экран текста</td>
+    <td align="center"><img src="misc/images/playback_queue.jpg" width="150"/><br/>Очередь воспроизведения</td>
+  </tr>
+</table>
+
+---
+
 ## Что уже реализовано
 
 - Поиск песен с сервера
